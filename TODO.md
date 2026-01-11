@@ -26,11 +26,11 @@
 - [x] 19. Créer page Mode Mixte (exercices aléatoires des 3 types)
 
 ## Phase 4 : Accessibilité et UX
-- [ ] 20. Implémenter thème sombre/clair avec préférence système
-- [ ] 21. Implémenter tailles de police ajustables
-- [ ] 22. Ajouter descriptions ARIA pour formules mathématiques
-- [ ] 23. Tester navigation clavier complète
-- [ ] 24. Valider contraste WCAG AA minimum
+- [x] 20. Implémenter thème sombre/clair avec préférence système
+- [x] 21. Implémenter tailles de police ajustables
+- [x] 22. Ajouter descriptions ARIA pour formules mathématiques
+- [x] 23. Tester navigation clavier complète
+- [x] 24. Valider contraste WCAG AA minimum
 
 ## Phase 5 : Fonctionnalités supplémentaires
 - [ ] 25. Ajouter système de score par session
