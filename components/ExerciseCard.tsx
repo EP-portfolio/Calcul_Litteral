@@ -8,8 +8,9 @@ import Feedback from './Feedback'
 
 interface ExerciseCardProps {
   question: Expression | FactoredExpression
-  correctAnswer: Expression
+  correctAnswer: string
   onSubmit: (userAnswer: string) => { isCorrect: boolean; explanation?: string[] }
+  onNewExercise: () => void
   exerciseNumber: number
   type: 'development' | 'reduction' | 'factorization'
 }
@@ -18,6 +19,7 @@ export default function ExerciseCard({
   question,
   correctAnswer,
   onSubmit,
+  onNewExercise,
   exerciseNumber,
   type,
 }: ExerciseCardProps) {
@@ -40,6 +42,7 @@ export default function ExerciseCard({
     setUserAnswer('')
     setFeedback(null)
     setHasSubmitted(false)
+    onNewExercise()
   }
 
   const formatQuestion = () => {
@@ -126,7 +129,7 @@ export default function ExerciseCard({
         {feedback && (
           <Feedback
             isCorrect={feedback.isCorrect}
-            correctAnswer={expressionToString(correctAnswer)}
+            correctAnswer={correctAnswer}
             explanation={feedback.explanation}
           />
         )}

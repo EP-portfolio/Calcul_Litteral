@@ -5,11 +5,11 @@ import ExerciseCard from '@/components/ExerciseCard'
 import { Expression, DifficultyLevel, ExerciseType } from '@/types/math'
 import { generateExercise } from '@/lib/mathGenerator'
 import { reduce } from '@/lib/mathOperations'
-import { parseExpression, areExpressionsEquivalent } from '@/lib/mathComparator'
+import { parseExpression, areExpressionsEquivalent, expressionToString } from '@/lib/mathComparator'
 
 export default function ReductionPage() {
   const [exercise, setExercise] = useState<Expression | null>(null)
-  const [correctAnswer, setCorrectAnswer] = useState<Expression | null>(null)
+  const [correctAnswer, setCorrectAnswer] = useState<string>('')
   const [exerciseCount, setExerciseCount] = useState(0)
   const [difficulty, setDifficulty] = useState<DifficultyLevel>(DifficultyLevel.EASY)
 
@@ -19,7 +19,7 @@ export default function ReductionPage() {
     const answer = reduce(newExercise)
 
     setExercise(newExercise)
-    setCorrectAnswer(answer)
+    setCorrectAnswer(expressionToString(answer))
     setExerciseCount((prev) => prev + 1)
   }
 
@@ -41,7 +41,12 @@ export default function ReductionPage() {
       }
     }
 
-    const isCorrect = areExpressionsEquivalent(parsedAnswer, correctAnswer)
+    const parsedCorrect = parseExpression(correctAnswer)
+    if (!parsedCorrect) {
+      return { isCorrect: false }
+    }
+
+    const isCorrect = areExpressionsEquivalent(parsedAnswer, parsedCorrect)
 
     return {
       isCorrect,
@@ -83,6 +88,7 @@ export default function ReductionPage() {
           question={exercise}
           correctAnswer={correctAnswer}
           onSubmit={handleSubmit}
+          onNewExercise={generateNewExercise}
           exerciseNumber={exerciseCount}
           type="reduction"
         />

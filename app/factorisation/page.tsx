@@ -5,21 +5,34 @@ import ExerciseCard from '@/components/ExerciseCard'
 import { Expression, DifficultyLevel, ExerciseType } from '@/types/math'
 import { generateExercise } from '@/lib/mathGenerator'
 import { factorize } from '@/lib/mathOperations'
-import { parseExpression, areExpressionsEquivalent } from '@/lib/mathComparator'
+import {
+  parseExpression,
+  areExpressionsEquivalent,
+  factoredExpressionToString,
+} from '@/lib/mathComparator'
 
 export default function FactorisationPage() {
   const [exercise, setExercise] = useState<Expression | null>(null)
-  const [correctAnswer, setCorrectAnswer] = useState<Expression | null>(null)
+  const [correctAnswer, setCorrectAnswer] = useState<string>('')
   const [exerciseCount, setExerciseCount] = useState(0)
   const [difficulty, setDifficulty] = useState<DifficultyLevel>(DifficultyLevel.EASY)
 
   const generateNewExercise = () => {
     const newExercise = generateExercise(ExerciseType.FACTORIZATION, difficulty) as Expression
 
-    // La bonne réponse est l'expression elle-même, car c'est déjà sous forme développée
-    // L'élève doit trouver la forme factorisée
+    // Calculer la forme factorisée
+    const factorized = factorize(newExercise)
+
     setExercise(newExercise)
-    setCorrectAnswer(newExercise) // On garde l'original pour comparaison
+
+    // Si on peut factoriser, utiliser la forme factorisée comme réponse
+    if (factorized) {
+      setCorrectAnswer(factoredExpressionToString(factorized))
+    } else {
+      // Sinon, l'expression est déjà sous forme réduite
+      setCorrectAnswer('Expression déjà réduite')
+    }
+
     setExerciseCount((prev) => prev + 1)
   }
 
@@ -29,7 +42,7 @@ export default function FactorisationPage() {
   }, [difficulty])
 
   const handleSubmit = (userAnswer: string) => {
-    if (!correctAnswer) {
+    if (!correctAnswer || !exercise) {
       return { isCorrect: false }
     }
 
@@ -41,18 +54,17 @@ export default function FactorisationPage() {
       }
     }
 
-    // Pour la factorisation, on vérifie que la réponse est équivalente à l'exercice
-    const isCorrect = areExpressionsEquivalent(parsedAnswer, correctAnswer)
+    // Vérifier que la réponse de l'élève développée == l'exercice
+    const isCorrect = areExpressionsEquivalent(parsedAnswer, exercise)
 
     if (isCorrect) {
-      // Vérifier si vraiment factorisé (forme plus simple)
-      // Pour simplifier, on accepte toute réponse équivalente
-      const factorized = factorize(correctAnswer)
+      // Vérifier si l'expression pouvait être factorisée
+      const factorized = factorize(exercise)
       return {
         isCorrect: true,
         explanation: factorized
-          ? ['Vous avez trouvé la bonne factorisation !']
-          : ['Bonne réponse ! Cette expression est déjà sous forme réduite.'],
+          ? ['Bravo ! Vous avez trouvé la bonne factorisation !']
+          : ['Correct ! Cette expression est déjà sous forme réduite.'],
       }
     }
 
@@ -97,6 +109,7 @@ export default function FactorisationPage() {
           question={exercise}
           correctAnswer={correctAnswer}
           onSubmit={handleSubmit}
+          onNewExercise={generateNewExercise}
           exerciseNumber={exerciseCount}
           type="factorization"
         />

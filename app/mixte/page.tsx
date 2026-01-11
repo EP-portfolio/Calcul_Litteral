@@ -5,11 +5,17 @@ import ExerciseCard from '@/components/ExerciseCard'
 import { Expression, FactoredExpression, DifficultyLevel, ExerciseType } from '@/types/math'
 import { generateExercise } from '@/lib/mathGenerator'
 import { developAndReduce, reduce, factorize } from '@/lib/mathOperations'
-import { parseExpression, areExpressionsEquivalent } from '@/lib/mathComparator'
+import {
+  parseExpression,
+  areExpressionsEquivalent,
+  expressionToString,
+  factoredExpressionToString,
+} from '@/lib/mathComparator'
 
 export default function MixtePage() {
   const [exercise, setExercise] = useState<Expression | FactoredExpression | null>(null)
-  const [correctAnswer, setCorrectAnswer] = useState<Expression | null>(null)
+  const [correctAnswer, setCorrectAnswer] = useState<string>('')
+  const [originalExercise, setOriginalExercise] = useState<Expression | null>(null)
   const [exerciseCount, setExerciseCount] = useState(0)
   const [currentType, setCurrentType] = useState<ExerciseType>(ExerciseType.DEVELOPMENT)
   const [difficulty, setDifficulty] = useState<DifficultyLevel>(DifficultyLevel.EASY)
@@ -21,19 +27,26 @@ export default function MixtePage() {
 
     const newExercise = generateExercise(randomType, difficulty)
 
-    let answer: Expression
+    let answerStr: string
+    let origExpr: Expression | null = null
 
     if (randomType === ExerciseType.DEVELOPMENT) {
-      answer = developAndReduce(newExercise as FactoredExpression)
+      const answer = developAndReduce(newExercise as FactoredExpression)
+      answerStr = expressionToString(answer)
     } else if (randomType === ExerciseType.REDUCTION) {
-      answer = reduce(newExercise as Expression)
+      const answer = reduce(newExercise as Expression)
+      answerStr = expressionToString(answer)
     } else {
       // Factorization
-      answer = newExercise as Expression
+      const expr = newExercise as Expression
+      origExpr = expr
+      const factorized = factorize(expr)
+      answerStr = factorized ? factoredExpressionToString(factorized) : 'Expression déjà réduite'
     }
 
     setExercise(newExercise)
-    setCorrectAnswer(answer)
+    setCorrectAnswer(answerStr)
+    setOriginalExercise(origExpr)
     setCurrentType(randomType)
     setExerciseCount((prev) => prev + 1)
   }
@@ -56,7 +69,17 @@ export default function MixtePage() {
       }
     }
 
-    const isCorrect = areExpressionsEquivalent(parsedAnswer, correctAnswer)
+    // Pour la factorisation, on compare avec l'exercice original
+    let isCorrect: boolean
+    if (currentType === ExerciseType.FACTORIZATION && originalExercise) {
+      isCorrect = areExpressionsEquivalent(parsedAnswer, originalExercise)
+    } else {
+      const parsedCorrect = parseExpression(correctAnswer)
+      if (!parsedCorrect) {
+        return { isCorrect: false }
+      }
+      isCorrect = areExpressionsEquivalent(parsedAnswer, parsedCorrect)
+    }
 
     let explanation: string[] | undefined
 
@@ -78,10 +101,10 @@ export default function MixtePage() {
         ]
       }
     } else if (currentType === ExerciseType.FACTORIZATION) {
-      const factorized = factorize(correctAnswer)
-      explanation = factorized
-        ? ['Vous avez trouvé la bonne factorisation !']
-        : ['Bonne réponse ! Cette expression est déjà sous forme réduite.']
+      explanation =
+        correctAnswer !== 'Expression déjà réduite'
+          ? ['Vous avez trouvé la bonne factorisation !']
+          : ['Bonne réponse ! Cette expression est déjà sous forme réduite.']
     }
 
     return { isCorrect, explanation }
@@ -121,6 +144,7 @@ export default function MixtePage() {
           question={exercise}
           correctAnswer={correctAnswer}
           onSubmit={handleSubmit}
+          onNewExercise={generateNewExercise}
           exerciseNumber={exerciseCount}
           type={
             currentType === ExerciseType.DEVELOPMENT

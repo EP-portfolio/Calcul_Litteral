@@ -1,4 +1,4 @@
-import { Term, Expression } from '@/types/math'
+import { Term, Expression, FactoredExpression } from '@/types/math'
 import { reduce } from './mathOperations'
 
 /**
@@ -155,6 +155,15 @@ function parseTerm(termStr: string, sign: number): Term | null {
   } catch (e) {
     return null
   }
+}
+
+/**
+ * Convertit une FactoredExpression en chaîne de caractères lisible
+ */
+export function factoredExpressionToString(factored: FactoredExpression): string {
+  const factorStr = expressionToString(factored.factor)
+  const multipliedByStr = expressionToString(factored.multipliedBy)
+  return `${factorStr}(${multipliedByStr})`
 }
 
 /**
