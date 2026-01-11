@@ -81,11 +81,11 @@ export default function ExerciseCard({
 
       <div className="space-y-4">
         <div>
-          <p className="text-gray-700 dark:text-gray-300 font-medium mb-2">
+          <p className="text-gray-800 dark:text-gray-200 font-medium mb-2">
             {getInstructionText()}
           </p>
           <div
-            className="text-2xl font-mono bg-blue-50 dark:bg-blue-900/30 p-4 rounded border border-blue-200 dark:border-blue-700"
+            className="text-2xl font-mono font-semibold bg-blue-100 dark:bg-blue-950 text-gray-900 dark:text-blue-50 p-4 rounded border-2 border-blue-300 dark:border-blue-600"
             role="math"
             aria-label={`Expression mathématique : ${formatQuestion()}`}
           >

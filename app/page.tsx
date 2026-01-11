@@ -31,11 +31,15 @@ export default function Home() {
   return (
     <div className="max-w-6xl mx-auto">
       <header className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Bienvenue sur Calcul Littéral</h1>
-        <p className="text-xl text-gray-600 mb-2">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+          Bienvenue sur Calcul Littéral
+        </h1>
+        <p className="text-xl text-gray-700 dark:text-gray-300 mb-2">
           Application d&apos;entraînement pour les élèves de 3ème
         </p>
-        <p className="text-gray-600">Choisissez un type d&apos;exercice pour commencer</p>
+        <p className="text-gray-700 dark:text-gray-300">
+          Choisissez un type d&apos;exercice pour commencer
+        </p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -53,9 +57,11 @@ export default function Home() {
         ))}
       </div>
 
-      <section className="mt-12 bg-blue-50 rounded-lg p-6 border border-blue-200">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Comment ça marche ?</h2>
-        <ol className="list-decimal list-inside space-y-2 text-gray-700">
+      <section className="mt-12 bg-blue-50 dark:bg-blue-950 rounded-lg p-6 border-2 border-blue-300 dark:border-blue-700">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+          Comment ça marche ?
+        </h2>
+        <ol className="list-decimal list-inside space-y-2 text-gray-800 dark:text-gray-200">
           <li>Choisissez un type d&apos;exercice ou le mode mixte</li>
           <li>Sélectionnez votre niveau de difficulté (facile, moyen, difficile)</li>
           <li>Résolvez l&apos;exercice et entrez votre réponse</li>

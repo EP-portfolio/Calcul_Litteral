@@ -39,20 +39,27 @@ export default function MathInput({
           onKeyDown={handleKeyDown}
           disabled={disabled}
           placeholder={placeholder}
-          className="w-full px-4 py-3 font-mono text-lg border-2 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="w-full px-4 py-3 font-mono text-lg text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 border-2 border-gray-400 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
           aria-label={label}
           aria-describedby="input-hint"
         />
       </div>
 
-      <p id="input-hint" className="text-sm text-gray-600">
+      <p id="input-hint" className="text-sm text-gray-700 dark:text-gray-300">
         Utilisez ^ pour les exposants (ex: x^2 pour x²). Variables : x, y
       </p>
 
       {value && (
-        <div className="mt-2 p-3 bg-gray-50 rounded border border-gray-200" aria-live="polite">
-          <p className="text-sm text-gray-600 mb-1">Aperçu :</p>
-          <p className="text-xl font-mono" role="math" aria-label={`Aperçu : ${value}`}>
+        <div
+          className="mt-2 p-3 bg-gray-100 dark:bg-gray-800 rounded border-2 border-gray-300 dark:border-gray-600"
+          aria-live="polite"
+        >
+          <p className="text-sm text-gray-800 dark:text-gray-200 font-medium mb-1">Aperçu :</p>
+          <p
+            className="text-xl font-mono font-semibold text-gray-900 dark:text-gray-100"
+            role="math"
+            aria-label={`Aperçu : ${value}`}
+          >
             {value}
           </p>
         </div>
