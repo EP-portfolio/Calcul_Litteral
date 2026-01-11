@@ -1,0 +1,13 @@
+﻿{
+  "permissions": {
+    "allow": [
+      "Bash(**/ralph-wiggum/**)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(git *)",
+      "Bash(mkdir *)",
+      "Bash(cat *)",
+      "Bash(echo *)"
+    ]
+  }
+}
