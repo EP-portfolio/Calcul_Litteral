@@ -1,10 +1,10 @@
 ﻿# Application Calcul Littéral - 3ème
 
 ## Phase 1 : Setup projet
-- [ ] 1. Initialiser Next.js avec TypeScript
-- [ ] 2. Configurer Tailwind CSS
-- [ ] 3. Configurer ESLint + Prettier avec règles accessibilité (eslint-plugin-jsx-a11y)
-- [ ] 4. Créer structure dossiers (components/, lib/, types/, app/)
+- [x] 1. Initialiser Next.js avec TypeScript
+- [x] 2. Configurer Tailwind CSS
+- [x] 3. Configurer ESLint + Prettier avec règles accessibilité (eslint-plugin-jsx-a11y)
+- [x] 4. Créer structure dossiers (components/, lib/, types/, app/)
 
 ## Phase 2 : Moteur mathématique
 - [ ] 5. Créer types TypeScript pour expressions algébriques

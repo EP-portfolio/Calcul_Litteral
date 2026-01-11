@@ -1,5 +1,10 @@
 {
   "enabledPlugins": {
     "ralph-wiggum@claude-code-plugins": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nPhase 1 : Setup projet Next.js terminé\n\n- Initialisation Next.js 14 avec App Router et TypeScript\n- Configuration Tailwind CSS\n- Configuration ESLint avec règles accessibilité \\(jsx-a11y\\)\n- Configuration Prettier\n- Structure de dossiers \\(app/, components/, lib/, types/\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
   }
 }
