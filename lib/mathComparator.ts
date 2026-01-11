@@ -53,8 +53,96 @@ function areTermsEqual(term1: Term, term2: Term): boolean {
 }
 
 /**
+ * Développe les parenthèses dans une expression (ex: "3(x+2)" devient "3x+6")
+ */
+function expandParentheses(input: string): string {
+  let result = input
+
+  // Regex pour trouver les expressions du type: nombre(expression)
+  const pattern = /(-?\d*\.?\d*)\(([^()]+)\)/g
+
+  while (pattern.test(result)) {
+    result = result.replace(pattern, (match, coefficient, inside) => {
+      // Si pas de coefficient explicite, c'est 1
+      const coef =
+        coefficient === '' || coefficient === '+'
+          ? 1
+          : coefficient === '-'
+            ? -1
+            : parseFloat(coefficient)
+
+      // Parser l'expression à l'intérieur
+      const insideExpr = parseSimpleExpression(inside, coef)
+      return insideExpr
+    })
+    pattern.lastIndex = 0
+  }
+
+  return result
+}
+
+/**
+ * Parse et multiplie une expression simple par un coefficient
+ */
+function parseSimpleExpression(expr: string, multiplier: number): string {
+  const terms: string[] = []
+  let currentTerm = ''
+  let sign = 1
+
+  for (let i = 0; i < expr.length; i++) {
+    const char = expr[i]
+
+    if (char === '+' || char === '-') {
+      if (currentTerm) {
+        terms.push(multiplyTerm(currentTerm, sign * multiplier))
+      }
+      currentTerm = ''
+      sign = char === '+' ? 1 : -1
+    } else {
+      currentTerm += char
+    }
+  }
+
+  if (currentTerm) {
+    terms.push(multiplyTerm(currentTerm, sign * multiplier))
+  }
+
+  return terms.join('')
+}
+
+/**
+ * Multiplie un terme par un coefficient et retourne la string formatée
+ */
+function multiplyTerm(term: string, multiplier: number): string {
+  // Extraire le coefficient du terme
+  const coeffMatch = term.match(/^(-?\d*\.?\d*)(.*)/)
+  if (!coeffMatch) return term
+
+  const termCoef =
+    coeffMatch[1] === '' || coeffMatch[1] === '+'
+      ? 1
+      : coeffMatch[1] === '-'
+        ? -1
+        : parseFloat(coeffMatch[1])
+  const variables = coeffMatch[2]
+
+  const result = termCoef * multiplier
+
+  if (result === 0) return ''
+
+  const sign = result > 0 ? '+' : ''
+  const absResult = Math.abs(result)
+
+  if (variables) {
+    return `${sign}${absResult === 1 ? '' : result}${variables}`
+  } else {
+    return `${sign}${result}`
+  }
+}
+
+/**
  * Parse une chaîne de caractères en Expression
- * Supporte: "3x^2 + 2x - 5", "x + 1", "5", etc.
+ * Supporte: "3x^2 + 2x - 5", "x + 1", "5", "3(x+2)", etc.
  */
 export function parseExpression(input: string): Expression | null {
   try {
@@ -64,6 +152,9 @@ export function parseExpression(input: string): Expression | null {
 
     // Remplacer les ** par ^ pour uniformiser
     cleaned = cleaned.replace(/\*\*/g, '^')
+
+    // Développer les parenthèses si présentes
+    cleaned = expandParentheses(cleaned)
 
     const terms: Term[] = []
     let currentTerm = ''

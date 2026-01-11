@@ -49,9 +49,9 @@ function randomVariable(difficulty: DifficultyLevel): string {
 /**
  * Génère un terme simple (ex: 3x, -2y, 5x²)
  */
-export function generateSimpleTerm(difficulty: DifficultyLevel): Term {
+export function generateSimpleTerm(difficulty: DifficultyLevel, fixedVariable?: string): Term {
   const coef = randomCoefficient(difficulty)
-  const varName = randomVariable(difficulty)
+  const varName = fixedVariable || randomVariable(difficulty)
 
   // Probabilité d'avoir un exposant 2 selon la difficulté
   const hasExponent = difficulty !== DifficultyLevel.EASY && Math.random() > 0.5
@@ -82,8 +82,11 @@ export function generateConstantTerm(difficulty: DifficultyLevel): Term {
 /**
  * Génère une expression linéaire simple (ex: 2x + 3)
  */
-export function generateLinearExpression(difficulty: DifficultyLevel): Expression {
-  const term1 = generateSimpleTerm(difficulty)
+export function generateLinearExpression(
+  difficulty: DifficultyLevel,
+  fixedVariable?: string
+): Expression {
+  const term1 = generateSimpleTerm(difficulty, fixedVariable)
   const term2 = generateConstantTerm(difficulty)
 
   return {
@@ -100,7 +103,8 @@ export function generateSimpleDevelopment(difficulty: DifficultyLevel): Factored
     terms: [{ coefficient: k, variables: [] }],
   }
 
-  const expression = generateLinearExpression(difficulty)
+  const varName = randomVariable(difficulty)
+  const expression = generateLinearExpression(difficulty, varName)
 
   return {
     factor,
@@ -114,8 +118,9 @@ export function generateSimpleDevelopment(difficulty: DifficultyLevel): Factored
 export function generateDoubleParenthesisDevelopment(
   difficulty: DifficultyLevel
 ): FactoredExpression {
-  const factor = generateLinearExpression(difficulty)
-  const multipliedBy = generateLinearExpression(difficulty)
+  const varName = randomVariable(difficulty)
+  const factor = generateLinearExpression(difficulty, varName)
+  const multipliedBy = generateLinearExpression(difficulty, varName)
 
   return {
     factor,
@@ -188,10 +193,11 @@ export function generateRemarkableIdentity(
 export function generateExpressionToReduce(difficulty: DifficultyLevel): Expression {
   const numTerms = difficulty === DifficultyLevel.EASY ? 3 : 5
   const terms: Term[] = []
+  const varName = randomVariable(difficulty)
 
   for (let i = 0; i < numTerms; i++) {
     if (Math.random() > 0.5) {
-      terms.push(generateSimpleTerm(difficulty))
+      terms.push(generateSimpleTerm(difficulty, varName))
     } else {
       terms.push(generateConstantTerm(difficulty))
     }
@@ -227,7 +233,8 @@ export function generateExercise(
       // Pour la factorisation, on va générer le développé et demander de factoriser
       // On commence simple avec k(a+b) développé = ka + kb
       const k = randomCoefficient(difficulty)
-      const expr = generateLinearExpression(difficulty)
+      const varName = randomVariable(difficulty)
+      const expr = generateLinearExpression(difficulty, varName)
 
       // On développe k × expr pour créer l'expression à factoriser
       const developedTerms = expr.terms.map((term) => ({

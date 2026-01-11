@@ -106,6 +106,34 @@ describe('mathComparator', () => {
       const result = parseExpression('')
       expect(result).toBeNull()
     })
+
+    it('should parse factored expressions with parentheses', () => {
+      // 3(x+2) devrait donner 3x + 6
+      const result = parseExpression('3(x+2)')
+      expect(result).not.toBeNull()
+      expect(result?.terms).toHaveLength(2)
+      expect(result?.terms[0].coefficient).toBe(3)
+      expect(result?.terms[0].variables[0].name).toBe('x')
+      expect(result?.terms[1].coefficient).toBe(6)
+    })
+
+    it('should parse factored expressions with and without spaces', () => {
+      // 3(x+3) == 3(x + 3)
+      const result1 = parseExpression('3(x+3)')
+      const result2 = parseExpression('3(x + 3)')
+      expect(result1).not.toBeNull()
+      expect(result2).not.toBeNull()
+      expect(areExpressionsEquivalent(result1!, result2!)).toBe(true)
+    })
+
+    it('should parse negative factored expressions', () => {
+      // -2(x+1) devrait donner -2x - 2
+      const result = parseExpression('-2(x+1)')
+      expect(result).not.toBeNull()
+      expect(result?.terms).toHaveLength(2)
+      expect(result?.terms[0].coefficient).toBe(-2)
+      expect(result?.terms[1].coefficient).toBe(-2)
+    })
   })
 
   describe('expressionToString', () => {
