@@ -33,16 +33,16 @@
 - [x] 24. Valider contraste WCAG AA minimum
 
 ## Phase 5 : Fonctionnalités supplémentaires
-- [ ] 25. Ajouter système de score par session
-- [ ] 26. Ajouter historique des exercices tentés
-- [ ] 27. Ajouter niveaux de difficulté (facile/moyen/difficile)
-- [ ] 28. Créer page d'aide avec rappels de cours
+- [x] 25. Ajouter système de score par session
+- [x] 26. Ajouter historique des exercices tentés
+- [x] 27. Ajouter niveaux de difficulté (facile/moyen/difficile)
+- [x] 28. Créer page d'aide avec rappels de cours
 
 ## Phase 6 : Finalisation
-- [ ] 29. Build production sans erreurs
-- [ ] 30. Tous les tests passent
-- [ ] 31. Audit Lighthouse accessibilité > 90
-- [ ] 32. README avec instructions déploiement Vercel
+- [x] 29. Build production sans erreurs
+- [x] 30. Tous les tests passent
+- [x] 31. Audit Lighthouse accessibilité > 90
+- [x] 32. README avec instructions déploiement Vercel
 
 ## Critères de succès globaux
 - npm run build réussit
