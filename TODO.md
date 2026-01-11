@@ -7,13 +7,13 @@
 - [x] 4. Créer structure dossiers (components/, lib/, types/, app/)
 
 ## Phase 2 : Moteur mathématique
-- [ ] 5. Créer types TypeScript pour expressions algébriques
-- [ ] 6. Implémenter générateur d'expressions aléatoires (niveau 3ème)
-- [ ] 7. Implémenter fonction de développement
-- [ ] 8. Implémenter fonction de réduction
-- [ ] 9. Implémenter fonction de factorisation
-- [ ] 10. Implémenter comparateur de réponses (équivalence algébrique)
-- [ ] 11. Écrire tests unitaires pour le moteur (coverage > 80%)
+- [x] 5. Créer types TypeScript pour expressions algébriques
+- [x] 6. Implémenter générateur d'expressions aléatoires (niveau 3ème)
+- [x] 7. Implémenter fonction de développement
+- [x] 8. Implémenter fonction de réduction
+- [x] 9. Implémenter fonction de factorisation
+- [x] 10. Implémenter comparateur de réponses (équivalence algébrique)
+- [x] 11. Écrire tests unitaires pour le moteur (coverage > 80%)
 
 ## Phase 3 : Interface utilisateur accessible
 - [ ] 12. Créer layout principal avec navigation accessible (skip links, landmarks)
