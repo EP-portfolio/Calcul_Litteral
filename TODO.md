@@ -16,14 +16,14 @@
 - [x] 11. Écrire tests unitaires pour le moteur (coverage > 80%)
 
 ## Phase 3 : Interface utilisateur accessible
-- [ ] 12. Créer layout principal avec navigation accessible (skip links, landmarks)
-- [ ] 13. Créer composant ExerciseCard (énoncé + champ réponse)
-- [ ] 14. Créer composant MathInput (saisie expressions avec preview LaTeX)
-- [ ] 15. Créer composant Feedback (correction avec explication étape par étape)
-- [ ] 16. Créer page Développement
-- [ ] 17. Créer page Réduction
-- [ ] 18. Créer page Factorisation
-- [ ] 19. Créer page Mode Mixte (exercices aléatoires des 3 types)
+- [x] 12. Créer layout principal avec navigation accessible (skip links, landmarks)
+- [x] 13. Créer composant ExerciseCard (énoncé + champ réponse)
+- [x] 14. Créer composant MathInput (saisie expressions avec preview LaTeX)
+- [x] 15. Créer composant Feedback (correction avec explication étape par étape)
+- [x] 16. Créer page Développement
+- [x] 17. Créer page Réduction
+- [x] 18. Créer page Factorisation
+- [x] 19. Créer page Mode Mixte (exercices aléatoires des 3 types)
 
 ## Phase 4 : Accessibilité et UX
 - [ ] 20. Implémenter thème sombre/clair avec préférence système

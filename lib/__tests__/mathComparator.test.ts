@@ -1,8 +1,4 @@
-import {
-  areExpressionsEquivalent,
-  parseExpression,
-  expressionToString,
-} from '../mathComparator'
+import { areExpressionsEquivalent, parseExpression, expressionToString } from '../mathComparator'
 import { Expression } from '@/types/math'
 
 describe('mathComparator', () => {
