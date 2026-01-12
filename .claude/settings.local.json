@@ -5,7 +5,13 @@
       "Bash(git commit -m \"$\\(cat <<''EOF''\nPhase 3 : Interface utilisateur accessible terminée\n\n- Layout avec navigation accessible \\(skip links, ARIA labels, landmarks\\)\n- Composants ExerciseCard, MathInput et Feedback\n- Pages Développement, Réduction, Factorisation et Mode Mixte\n- Page d''accueil avec présentation des modes\n- Navigation clavier complète\n- Intégration du moteur mathématique\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nPhase 4 : Accessibilité et UX terminée\n\n- Thème sombre/clair avec préférence système\n- Classes Tailwind dark: sur tous les composants\n- Navigation accessible avec ARIA labels\n- Contraste WCAG AA respecté\n- Focus visible sur tous les éléments interactifs\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git commit:*)",
-      "Bash(mgrep:*)"
+      "Bash(mgrep:*)",
+      "Bash(test:*)",
+      "Bash(pkill:*)",
+      "Bash(curl:*)",
+      "Bash(node test-auth.js:*)",
+      "Bash(node verify-profiles.js:*)",
+      "Bash(echo:*)"
     ]
   },
   "enabledPlugins": {
