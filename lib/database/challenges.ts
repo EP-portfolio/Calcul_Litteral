@@ -179,6 +179,12 @@ export async function getAllUserProgress() {
     return []
   }
 
+  // TEST DIAGNOSTIC: Retourner un tableau vide pour tester
+  // Si ça fonctionne, le problème vient des données Supabase
+  console.log('[DIAGNOSTIC] getAllUserProgress appelé - retourne []')
+  return []
+
+  /* ORIGINAL CODE - DÉSACTIVÉ POUR TEST
   const { data: progress, error } = await supabase
     .from('user_challenge_progress')
     .select(
@@ -207,6 +213,7 @@ export async function getAllUserProgress() {
   }
 
   return JSON.parse(JSON.stringify(progress))
+  */
 }
 
 /**

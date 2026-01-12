@@ -12,7 +12,8 @@
       "Bash(node test-auth.js:*)",
       "Bash(node verify-profiles.js:*)",
       "Bash(echo:*)",
-      "Bash(vercel --version:*)"
+      "Bash(vercel --version:*)",
+      "WebFetch(domain:calcul-litteral.vercel.app)"
     ]
   },
   "enabledPlugins": {
