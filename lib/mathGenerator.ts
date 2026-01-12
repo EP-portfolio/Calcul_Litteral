@@ -70,6 +70,20 @@ export function generateSimpleTerm(difficulty: DifficultyLevel, fixedVariable?: 
 }
 
 /**
+ * Génère un terme linéaire (degré 1 uniquement, ex: 3x, -2y)
+ * Utilisé pour les exercices de développement afin de garantir un résultat max degré 2
+ */
+export function generateLinearTerm(difficulty: DifficultyLevel, fixedVariable?: string): Term {
+  const coef = randomCoefficient(difficulty)
+  const varName = fixedVariable || randomVariable(difficulty)
+
+  return {
+    coefficient: coef,
+    variables: [{ name: varName, exponent: 1 }],
+  }
+}
+
+/**
  * Génère un terme constant
  */
 export function generateConstantTerm(difficulty: DifficultyLevel): Term {
@@ -81,12 +95,13 @@ export function generateConstantTerm(difficulty: DifficultyLevel): Term {
 
 /**
  * Génère une expression linéaire simple (ex: 2x + 3)
+ * Utilise uniquement des termes de degré 1 pour garantir que le développement donne max degré 2
  */
 export function generateLinearExpression(
   difficulty: DifficultyLevel,
   fixedVariable?: string
 ): Expression {
-  const term1 = generateSimpleTerm(difficulty, fixedVariable)
+  const term1 = generateLinearTerm(difficulty, fixedVariable)
   const term2 = generateConstantTerm(difficulty)
 
   return {
