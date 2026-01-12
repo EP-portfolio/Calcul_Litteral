@@ -222,18 +222,8 @@ export async function getUserStats() {
     return null
   }
 
-  // TEST DIAGNOSTIC: Retourner des données hardcodées
-  console.log('[DIAGNOSTIC] getUserStats appelé - retourne données hardcodées')
-  return {
-    stats: [],
-    totalChallengesCompleted: 0,
-  }
-
-  /* ORIGINAL CODE - DÉSACTIVÉ POUR TEST
-  // Récupérer depuis la vue user_stats
   const { data: stats } = await supabase.from('user_stats').select('*').eq('user_id', user.id)
 
-  // Récupérer le nombre de challenges complétés
   const { data: completedChallenges } = await supabase
     .from('user_challenge_progress')
     .select('id', { count: 'exact' })
@@ -247,7 +237,6 @@ export async function getUserStats() {
 
   // Sérialiser complètement pour éviter l'erreur React #438
   return JSON.parse(JSON.stringify(result))
-  */
 }
 
 /**
@@ -264,11 +253,6 @@ export async function getUserRecentActivity() {
     return []
   }
 
-  // TEST DIAGNOSTIC: Retourner un tableau vide
-  console.log('[DIAGNOSTIC] getUserRecentActivity appelé - retourne []')
-  return []
-
-  /* ORIGINAL CODE - DÉSACTIVÉ POUR TEST
   const { data: activity } = await supabase
     .from('user_recent_activity')
     .select('*')
@@ -276,11 +260,10 @@ export async function getUserRecentActivity() {
     .order('activity_date', { ascending: false })
     .limit(30)
 
-  // Sérialiser complètement pour éviter l'erreur React #438
   if (!activity) {
     return []
   }
 
+  // Sérialiser complètement pour éviter l'erreur React #438
   return JSON.parse(JSON.stringify(activity))
-  */
 }
