@@ -121,18 +121,19 @@ export default function ChallengesPage() {
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
       <div className="container mx-auto max-w-7xl">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-          TEST ÉTAPE 3E - Retour 3A exact
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Version 3A qui fonctionnait - aucune navigation
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Mes Challenges</h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-8">
+          Choisissez un challenge pour tester vos compétences en calcul littéral
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {challenges.map((challenge, index) => (
-            <div
+            <button
               key={index}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
+              onClick={() =>
+                router.push(`/challenges/${challenge.competence}/${challenge.difficulty}`)
+              }
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200 text-left w-full"
             >
               <div
                 className={`bg-gradient-to-r ${getCompetenceColor(challenge.competence)} p-4 text-white`}
@@ -140,14 +141,15 @@ export default function ChallengesPage() {
                 <h3 className="text-lg font-bold">{challenge.title}</h3>
               </div>
               <div className="p-4">
+                <div className="mb-3">{getDifficultyBadge(challenge.difficulty)}</div>
                 <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">
-                  {getDifficultyBadge(challenge.difficulty)}
+                  {challenge.description}
                 </p>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-gray-900 dark:text-white font-semibold">
                   {challenge.isCompleted ? `Score: ${challenge.score}/5` : 'Non commencé'}
                 </p>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </div>

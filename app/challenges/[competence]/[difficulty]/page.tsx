@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import ExerciseCard from '@/components/ExerciseCard'
 import { createClient } from '@/lib/supabase/client'
@@ -22,14 +22,14 @@ import { FactoredExpression, Expression } from '@/types/math'
 import { saveChallengeResults } from '@/lib/database/challenges'
 
 interface PageProps {
-  params: Promise<{
+  params: {
     competence: Competence
     difficulty: Difficulty
-  }>
+  }
 }
 
 export default function ChallengePage({ params }: PageProps) {
-  const { competence, difficulty } = use(params)
+  const { competence, difficulty } = params
   const router = useRouter()
 
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0)
