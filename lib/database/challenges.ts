@@ -161,14 +161,8 @@ export async function getChallengeProgress(competence: Competence, difficulty: D
     return null
   }
 
-  // Sérialiser les dates pour éviter l'erreur React #438
-  const p = progress as any
-  return {
-    ...p,
-    completed_at: p.completed_at ? new Date(p.completed_at).toISOString() : null,
-    created_at: p.created_at ? new Date(p.created_at).toISOString() : null,
-    updated_at: p.updated_at ? new Date(p.updated_at).toISOString() : null,
-  }
+  // Sérialiser complètement pour éviter l'erreur React #438
+  return JSON.parse(JSON.stringify(progress))
 }
 
 /**
@@ -206,15 +200,13 @@ export async function getAllUserProgress() {
     return []
   }
 
-  // Sérialiser les dates pour éviter l'erreur React #438
-  return (
-    progress?.map((p: any) => ({
-      ...p,
-      completed_at: p.completed_at ? new Date(p.completed_at).toISOString() : null,
-      created_at: p.created_at ? new Date(p.created_at).toISOString() : null,
-      updated_at: p.updated_at ? new Date(p.updated_at).toISOString() : null,
-    })) || []
-  )
+  // Sérialiser complètement pour éviter l'erreur React #438
+  // JSON.parse(JSON.stringify()) force la conversion de tous les objets Date en strings
+  if (!progress) {
+    return []
+  }
+
+  return JSON.parse(JSON.stringify(progress))
 }
 
 /**
@@ -241,10 +233,13 @@ export async function getUserStats() {
     .eq('user_id', user.id)
     .eq('status', 'completed')
 
-  return {
+  const result = {
     stats: stats || [],
     totalChallengesCompleted: completedChallenges?.length || 0,
   }
+
+  // Sérialiser complètement pour éviter l'erreur React #438
+  return JSON.parse(JSON.stringify(result))
 }
 
 /**
@@ -268,11 +263,10 @@ export async function getUserRecentActivity() {
     .order('activity_date', { ascending: false })
     .limit(30)
 
-  // Sérialiser les dates pour éviter l'erreur React #438
-  return (
-    activity?.map((a: any) => ({
-      ...a,
-      activity_date: a.activity_date ? new Date(a.activity_date).toISOString() : null,
-    })) || []
-  )
+  // Sérialiser complètement pour éviter l'erreur React #438
+  if (!activity) {
+    return []
+  }
+
+  return JSON.parse(JSON.stringify(activity))
 }
