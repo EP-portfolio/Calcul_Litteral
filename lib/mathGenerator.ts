@@ -144,6 +144,31 @@ export function generateDoubleParenthesisDevelopment(
 }
 
 /**
+ * Génère une expression pour développement avec signe négatif -(a+b)(c+d)
+ * Représenté comme (-a-b)(c+d) pour simplifier
+ */
+export function generateNegativeDoubleParenthesisDevelopment(
+  difficulty: DifficultyLevel
+): FactoredExpression {
+  const varName = randomVariable(difficulty)
+  const firstParenthesis = generateLinearExpression(difficulty, varName)
+  const secondParenthesis = generateLinearExpression(difficulty, varName)
+
+  // Inverser les signes de la première parenthèse pour représenter le signe négatif
+  const negativeFactor: Expression = {
+    terms: firstParenthesis.terms.map((term) => ({
+      ...term,
+      coefficient: -term.coefficient,
+    })),
+  }
+
+  return {
+    factor: negativeFactor,
+    multipliedBy: secondParenthesis,
+  }
+}
+
+/**
  * Génère une identité remarquable
  */
 export function generateRemarkableIdentity(
@@ -204,18 +229,71 @@ export function generateRemarkableIdentity(
 
 /**
  * Génère une expression à réduire (plusieurs termes similaires)
+ * Garantit qu'après réduction, il reste au moins un terme en x ET un terme constant
  */
 export function generateExpressionToReduce(difficulty: DifficultyLevel): Expression {
-  const numTerms = difficulty === DifficultyLevel.EASY ? 3 : 5
-  const terms: Term[] = []
   const varName = randomVariable(difficulty)
 
-  for (let i = 0; i < numTerms; i++) {
-    if (Math.random() > 0.5) {
-      terms.push(generateSimpleTerm(difficulty, varName))
-    } else {
-      terms.push(generateConstantTerm(difficulty))
+  // 1. Générer l'expression cible réduite (résultat final garanti)
+  const targetXCoef = randomCoefficient(difficulty)
+  const targetConstant = randomCoefficient(difficulty)
+
+  // 2. Calculer combien de termes supplémentaires ajouter
+  const numExtraTerms = difficulty === DifficultyLevel.EASY ? 2 : 4
+
+  // 3. Créer des paires de termes qui contribuent au résultat
+  const terms: Term[] = []
+
+  // Répartir targetXCoef en plusieurs termes
+  const numXTerms = Math.floor(numExtraTerms / 2) + 1
+  const xContributions: number[] = []
+  let remainingX = targetXCoef
+
+  for (let i = 0; i < numXTerms - 1; i++) {
+    const contrib = randomInt(-10, 10)
+    xContributions.push(contrib)
+    remainingX -= contrib
+  }
+  xContributions.push(remainingX)
+
+  // Répartir targetConstant en plusieurs termes
+  const numConstTerms = numExtraTerms - Math.floor(numExtraTerms / 2) + 1
+  const constContributions: number[] = []
+  let remainingConst = targetConstant
+
+  for (let i = 0; i < numConstTerms - 1; i++) {
+    const contrib = randomInt(-10, 10)
+    constContributions.push(contrib)
+    remainingConst -= contrib
+  }
+  constContributions.push(remainingConst)
+
+  // 4. Créer les termes en x
+  for (const coef of xContributions) {
+    if (coef !== 0) {
+      // Parfois ajouter un exposant 2 pour les difficultés moyennes/difficiles
+      const useSquare = difficulty !== DifficultyLevel.EASY && Math.random() > 0.7
+      terms.push({
+        coefficient: coef,
+        variables: [{ name: varName, exponent: useSquare ? 2 : 1 }],
+      })
     }
+  }
+
+  // 5. Créer les termes constants
+  for (const coef of constContributions) {
+    if (coef !== 0) {
+      terms.push({
+        coefficient: coef,
+        variables: [],
+      })
+    }
+  }
+
+  // 6. Mélanger aléatoirement les termes
+  for (let i = terms.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[terms[i], terms[j]] = [terms[j], terms[i]]
   }
 
   return { terms }
@@ -232,11 +310,20 @@ export function generateExercise(
     case ExerciseType.DEVELOPMENT:
       if (difficulty === DifficultyLevel.EASY) {
         return generateSimpleDevelopment(difficulty)
-      } else if (difficulty === DifficultyLevel.HARD && Math.random() > 0.5) {
-        // 50% de chance d'avoir une identité remarquable en difficulté difficile
-        const identities = Object.values(RemarkableIdentity)
-        const randomIdentity = identities[randomInt(0, identities.length - 1)]
-        return generateRemarkableIdentity(randomIdentity, difficulty)
+      } else if (difficulty === DifficultyLevel.HARD) {
+        const rand = Math.random()
+        if (rand > 0.66) {
+          // 33% de chance d'avoir une identité remarquable
+          const identities = Object.values(RemarkableIdentity)
+          const randomIdentity = identities[randomInt(0, identities.length - 1)]
+          return generateRemarkableIdentity(randomIdentity, difficulty)
+        } else if (rand > 0.33) {
+          // 33% de chance d'avoir un développement avec signe négatif
+          return generateNegativeDoubleParenthesisDevelopment(difficulty)
+        } else {
+          // 33% de chance d'avoir un développement classique
+          return generateDoubleParenthesisDevelopment(difficulty)
+        }
       } else {
         return generateDoubleParenthesisDevelopment(difficulty)
       }
