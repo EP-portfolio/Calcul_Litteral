@@ -172,7 +172,7 @@ export default function ChallengePage({ params }: PageProps) {
         }
       })
 
-      await saveChallengeResults({
+      const saveResult = await saveChallengeResults({
         competence,
         difficulty,
         score,
@@ -180,6 +180,16 @@ export default function ChallengePage({ params }: PageProps) {
         timeSpent: total,
         exercises: exercisesWithQuestions,
       })
+
+      // Log pour debug
+      console.log('Résultat sauvegarde:', saveResult)
+
+      if (saveResult?.error) {
+        console.error('Erreur sauvegarde challenge:', saveResult.error)
+        alert(
+          'Erreur lors de la sauvegarde des résultats. Vos progrès pourraient ne pas être enregistrés.'
+        )
+      }
     }
   }
 

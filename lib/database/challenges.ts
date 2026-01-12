@@ -21,6 +21,13 @@ export interface ChallengeResult {
  * Sauvegarde les résultats d'un challenge complété
  */
 export async function saveChallengeResults(result: ChallengeResult) {
+  console.log(
+    '🔵 [SAVE] Début sauvegarde:',
+    result.competence,
+    result.difficulty,
+    'Score:',
+    result.score
+  )
   const supabase = await createClient()
 
   // Récupérer l'utilisateur
@@ -29,8 +36,11 @@ export async function saveChallengeResults(result: ChallengeResult) {
   } = await supabase.auth.getUser()
 
   if (!user) {
+    console.error('❌ [SAVE] Utilisateur non authentifié')
     return { error: 'Utilisateur non authentifié' }
   }
+
+  console.log('✅ [SAVE] User ID:', user.id)
 
   try {
     // 1. Créer ou récupérer le challenge dans la table challenges
@@ -89,9 +99,11 @@ export async function saveChallengeResults(result: ChallengeResult) {
       .single()
 
     if (progressError || !progressData) {
-      console.error('Erreur sauvegarde progrès:', progressError)
+      console.error('❌ [SAVE] Erreur sauvegarde progrès:', progressError)
       return { error: 'Erreur lors de la sauvegarde du progrès' }
     }
+
+    console.log('✅ [SAVE] Progrès enregistré, ID:', (progressData as any).id)
 
     // 3. Sauvegarder les tentatives individuelles
     const attempts = result.exercises.map((exercise) => ({
@@ -110,10 +122,13 @@ export async function saveChallengeResults(result: ChallengeResult) {
       .insert(attempts as any)
 
     if (attemptsError) {
-      console.error('Erreur sauvegarde tentatives:', attemptsError)
+      console.error('❌ [SAVE] Erreur sauvegarde tentatives:', attemptsError)
       // On continue même si les tentatives ne sont pas sauvegardées
+    } else {
+      console.log('✅ [SAVE] Tentatives enregistrées:', attempts.length)
     }
 
+    console.log('🎉 [SAVE] Sauvegarde terminée avec succès!')
     return { success: true, progressId: (progressData as any).id }
   } catch (error) {
     console.error('Erreur sauvegarde résultats:', error)
