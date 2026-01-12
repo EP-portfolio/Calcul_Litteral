@@ -99,6 +99,7 @@ export default function UserProfile() {
           <div className="p-2">
             <Link
               href="/dashboard"
+              prefetch={false}
               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
               onClick={() => setIsOpen(false)}
             >
