@@ -222,7 +222,12 @@ export async function getUserStats() {
     return null
   }
 
-  const { data: stats } = await supabase.from('user_stats').select('*').eq('user_id', user.id)
+  // Utiliser la fonction SQL RPC au lieu de la vue directement
+  const { data: stats, error: statsError } = await supabase.rpc('get_user_stats')
+
+  if (statsError) {
+    console.error('Erreur récupération stats:', statsError)
+  }
 
   const { data: completedChallenges } = await supabase
     .from('user_challenge_progress')
@@ -253,12 +258,13 @@ export async function getUserRecentActivity() {
     return []
   }
 
-  const { data: activity } = await supabase
-    .from('user_recent_activity')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('activity_date', { ascending: false })
-    .limit(30)
+  // Utiliser la fonction SQL RPC au lieu de la vue directement
+  const { data: activity, error: activityError } = await supabase.rpc('get_user_recent_activity')
+
+  if (activityError) {
+    console.error('Erreur récupération activité:', activityError)
+    return []
+  }
 
   if (!activity) {
     return []
