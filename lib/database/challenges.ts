@@ -147,7 +147,7 @@ export async function getChallengeProgress(competence: Competence, difficulty: D
     return null
   }
 
-  const { data: progress } = await supabase
+  const { data: progress, error: progressError } = await supabase
     .from('user_challenge_progress')
     .select('*')
     .eq('user_id', user.id)
@@ -157,7 +157,18 @@ export async function getChallengeProgress(competence: Competence, difficulty: D
     .limit(1)
     .single()
 
-  return progress
+  if (progressError || !progress) {
+    return null
+  }
+
+  // Sérialiser les dates pour éviter l'erreur React #438
+  const p = progress as any
+  return {
+    ...p,
+    completed_at: p.completed_at ? new Date(p.completed_at).toISOString() : null,
+    created_at: p.created_at ? new Date(p.created_at).toISOString() : null,
+    updated_at: p.updated_at ? new Date(p.updated_at).toISOString() : null,
+  }
 }
 
 /**
@@ -195,7 +206,15 @@ export async function getAllUserProgress() {
     return []
   }
 
-  return progress || []
+  // Sérialiser les dates pour éviter l'erreur React #438
+  return (
+    progress?.map((p: any) => ({
+      ...p,
+      completed_at: p.completed_at ? new Date(p.completed_at).toISOString() : null,
+      created_at: p.created_at ? new Date(p.created_at).toISOString() : null,
+      updated_at: p.updated_at ? new Date(p.updated_at).toISOString() : null,
+    })) || []
+  )
 }
 
 /**
@@ -249,5 +268,11 @@ export async function getUserRecentActivity() {
     .order('activity_date', { ascending: false })
     .limit(30)
 
-  return activity || []
+  // Sérialiser les dates pour éviter l'erreur React #438
+  return (
+    activity?.map((a: any) => ({
+      ...a,
+      activity_date: a.activity_date ? new Date(a.activity_date).toISOString() : null,
+    })) || []
+  )
 }
