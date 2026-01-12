@@ -72,6 +72,7 @@ export default function ChallengesPage() {
     setLoading(false)
   }
 
+  // ÉTAPE 3A: Ajouter helpers
   const getCompetenceColor = (competence: Competence) => {
     switch (competence) {
       case 'developpement':
@@ -120,113 +121,34 @@ export default function ChallengesPage() {
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
       <div className="container mx-auto max-w-7xl">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Challenges</h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Complétez les 9 challenges pour maîtriser le calcul littéral !
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
-            Chaque challenge contient 5 exercices à résoudre.
-          </p>
-        </div>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          TEST ÉTAPE 3A - Helpers
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Données + Fonctions helpers (getCompetenceColor, getDifficultyBadge)
+        </p>
 
-        {(['developpement', 'reduction', 'factorisation'] as Competence[]).map((competence) => (
-          <div key={competence} className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 capitalize">
-              {competence}
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {challenges
-                .filter((c) => c.competence === competence)
-                .map((challenge) => (
-                  <div
-                    key={`${challenge.competence}-${challenge.difficulty}`}
-                    className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-                  >
-                    <div
-                      className={`bg-gradient-to-r ${getCompetenceColor(
-                        challenge.competence
-                      )} p-4 text-white`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-lg font-bold">{challenge.title}</h3>
-                        {getDifficultyBadge(challenge.difficulty)}
-                      </div>
-                      {challenge.isCompleted && (
-                        <div className="flex items-center gap-2 mt-2">
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                              fillRule="evenodd"
-                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                          <span className="text-sm">Complété ({challenge.score}/5)</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="p-4">
-                      <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
-                        {challenge.description}
-                      </p>
-
-                      <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-500 mb-4">
-                        <span>5 exercices</span>
-                        <span>~10 minutes</span>
-                      </div>
-
-                      <Link
-                        href={`/challenges/${challenge.competence}/${challenge.difficulty}`}
-                        className={`block w-full text-center py-3 px-4 rounded-lg font-medium transition-colors ${
-                          challenge.isCompleted
-                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                            : 'bg-gradient-to-r ' +
-                              getCompetenceColor(challenge.competence) +
-                              ' text-white hover:opacity-90'
-                        }`}
-                      >
-                        {challenge.isCompleted ? 'Refaire' : 'Commencer'}
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
-        ))}
-
-        <div className="mt-12 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-            Progression globale
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
-              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                {challenges.filter((c) => c.isCompleted).length}/9
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          {challenges.map((challenge, index) => (
+            <div
+              key={index}
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
+            >
+              <div
+                className={`bg-gradient-to-r ${getCompetenceColor(challenge.competence)} p-4 text-white`}
+              >
+                <h3 className="text-lg font-bold">{challenge.title}</h3>
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Challenges complétés</div>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
-              <div className="text-3xl font-bold text-green-600 dark:text-green-400">
-                {challenges.length > 0
-                  ? Math.round(
-                      (challenges.filter((c) => c.isCompleted).length / challenges.length) * 100
-                    )
-                  : 0}
-                %
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Taux de complétion</div>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
-              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
-                {challenges.reduce((sum, c) => sum + (c.score || 0), 0)}
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
-                Exercices réussis (total)
+              <div className="p-4">
+                <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">
+                  {getDifficultyBadge(challenge.difficulty)}
+                </p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  {challenge.isCompleted ? `Score: ${challenge.score}/5` : 'Non commencé'}
+                </p>
               </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </main>
