@@ -10,7 +10,7 @@ export interface ChallengeResult {
   totalExercises: number
   timeSpent: number
   exercises: Array<{
-    question: any
+    question: string // String sérialisée de l'expression
     userAnswer: string
     isCorrect: boolean
     timeSpent: number

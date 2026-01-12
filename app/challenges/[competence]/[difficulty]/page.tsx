@@ -151,12 +151,26 @@ export default function ChallengePage({ params }: PageProps) {
 
       // Sauvegarder les résultats en base de données
       const score = answers.filter((a) => a.isCorrect).length
-      const exercisesWithQuestions = answers.map((answer, index) => ({
-        question: exercises[index].question,
-        userAnswer: answer.userAnswer,
-        isCorrect: answer.isCorrect,
-        timeSpent: answer.timeSpent,
-      }))
+      const exercisesWithQuestions = answers.map((answer, index) => {
+        const exercise = exercises[index]
+        // Convertir la question en string pour la sérialisation
+        let questionStr = ''
+        const exerciseType = COMPETENCE_MAP[competence]
+        if (exerciseType === 'factorization') {
+          questionStr = expressionToString(exercise.question as Expression)
+        } else if (exerciseType === 'development') {
+          questionStr = factoredExpressionToString(exercise.question as FactoredExpression)
+        } else {
+          questionStr = expressionToString(exercise.question as Expression)
+        }
+
+        return {
+          question: questionStr,
+          userAnswer: answer.userAnswer,
+          isCorrect: answer.isCorrect,
+          timeSpent: answer.timeSpent,
+        }
+      })
 
       await saveChallengeResults({
         competence,

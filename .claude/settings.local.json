@@ -11,7 +11,8 @@
       "Bash(curl:*)",
       "Bash(node test-auth.js:*)",
       "Bash(node verify-profiles.js:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(vercel --version:*)"
     ]
   },
   "enabledPlugins": {
