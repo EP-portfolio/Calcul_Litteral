@@ -122,20 +122,17 @@ export default function ChallengesPage() {
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
       <div className="container mx-auto max-w-7xl">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-          TEST ÉTAPE 3D - onClick + router.push
+          TEST ÉTAPE 3E - Retour 3A exact
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Remplacement Link par onClick pour éviter #438
+          Version 3A qui fonctionnait - aucune navigation
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
           {challenges.map((challenge, index) => (
-            <button
+            <div
               key={index}
-              onClick={() =>
-                router.push(`/challenges/${challenge.competence}/${challenge.difficulty}`)
-              }
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200 cursor-pointer text-left w-full"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
             >
               <div
                 className={`bg-gradient-to-r ${getCompetenceColor(challenge.competence)} p-4 text-white`}
@@ -150,7 +147,7 @@ export default function ChallengesPage() {
                   {challenge.isCompleted ? `Score: ${challenge.score}/5` : 'Non commencé'}
                 </p>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       </div>
