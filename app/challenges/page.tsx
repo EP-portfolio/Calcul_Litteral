@@ -122,10 +122,10 @@ export default function ChallengesPage() {
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
       <div className="container mx-auto max-w-7xl">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-          TEST ÉTAPE 3B - Links
+          TEST ÉTAPE 3C - Links avec prefetch={false}
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Ajout des composants Link pour rendre les cartes cliquables
+          Test avec désactivation du prefetch pour éviter #438
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
@@ -133,6 +133,7 @@ export default function ChallengesPage() {
             <Link
               key={index}
               href={`/challenges/${challenge.competence}/${challenge.difficulty}`}
+              prefetch={false}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200"
             >
               <div
