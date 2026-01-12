@@ -179,12 +179,6 @@ export async function getAllUserProgress() {
     return []
   }
 
-  // TEST DIAGNOSTIC: Retourner un tableau vide pour tester
-  // Si ça fonctionne, le problème vient des données Supabase
-  console.log('[DIAGNOSTIC] getAllUserProgress appelé - retourne []')
-  return []
-
-  /* ORIGINAL CODE - DÉSACTIVÉ POUR TEST
   const { data: progress, error } = await supabase
     .from('user_challenge_progress')
     .select(
@@ -206,14 +200,12 @@ export async function getAllUserProgress() {
     return []
   }
 
-  // Sérialiser complètement pour éviter l'erreur React #438
-  // JSON.parse(JSON.stringify()) force la conversion de tous les objets Date en strings
   if (!progress) {
     return []
   }
 
+  // CRUCIAL: Sérialisation JSON complète pour convertir tous les Date en strings
   return JSON.parse(JSON.stringify(progress))
-  */
 }
 
 /**
