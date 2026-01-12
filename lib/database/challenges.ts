@@ -43,7 +43,8 @@ export async function saveChallengeResults(result: ChallengeResult) {
   console.log('✅ [SAVE] User ID:', user.id)
 
   try {
-    // 1. Créer ou récupérer le challenge dans la table challenges
+    // 1. Récupérer le challenge dans la table challenges (doit être pré-créé)
+    console.log('🔍 [SAVE] Recherche challenge:', result.competence, result.difficulty)
     const { data: existingChallenge, error: fetchError } = await supabase
       .from('challenges')
       .select('id')
@@ -52,31 +53,19 @@ export async function saveChallengeResults(result: ChallengeResult) {
       .limit(1)
       .single()
 
-    let challengeId: string
-
     if (fetchError || !existingChallenge) {
-      // Créer le challenge s'il n'existe pas
-      const { data: newChallenge, error: insertError } = await supabase
-        .from('challenges')
-        .insert({
-          title: `Challenge ${result.competence} - ${result.difficulty}`,
-          description: `5 exercices de ${result.competence} niveau ${result.difficulty}`,
-          competence: result.competence,
-          difficulty: result.difficulty,
-          exercises: result.exercises.map((e) => e.question),
-        } as any)
-        .select('id')
-        .single()
-
-      if (insertError || !newChallenge) {
-        console.error('Erreur création challenge:', insertError)
-        return { error: 'Erreur lors de la création du challenge' }
+      console.error('❌ [SAVE] Challenge non trouvé. Il doit être pré-créé dans la base:', {
+        competence: result.competence,
+        difficulty: result.difficulty,
+        error: fetchError,
+      })
+      return {
+        error: `Challenge ${result.competence}-${result.difficulty} non trouvé. Veuillez contacter l'administrateur.`,
       }
-
-      challengeId = (newChallenge as any).id
-    } else {
-      challengeId = (existingChallenge as any).id
     }
+
+    const challengeId = (existingChallenge as any).id
+    console.log('✅ [SAVE] Challenge trouvé, ID:', challengeId)
 
     // 2. Créer ou mettre à jour le progrès utilisateur
     const { data: progressData, error: progressError } = await supabase
