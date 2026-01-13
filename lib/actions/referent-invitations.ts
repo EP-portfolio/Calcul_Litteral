@@ -260,11 +260,13 @@ export async function acceptReferentInvitation(token: string) {
     return { error: 'Vous êtes déjà lié à cet étudiant' }
   }
 
-  // 7. Create link
+  // 7. Create link with notifications enabled
   const { error: linkError } = await supabase.from('student_referent_links').insert({
     student_id: typedInvitation.student_id,
     referent_id: user.id,
     invitation_id: typedInvitation.id,
+    is_active: true,
+    notify_on_challenge_completion: true,
   })
 
   if (linkError) {

@@ -152,50 +152,70 @@ async function notifyReferentsOfCompletion(
   totalExercises: number,
   timeSpent: number
 ) {
+  console.log('📧 [NOTIFY] Starting referent notification for student:', studentId)
+
   const supabase = await createClient()
 
   // 1. Get student profile
-  const { data: studentProfile } = await supabase
+  const { data: studentProfile, error: studentError } = await supabase
     .from('profiles')
-    .select('full_name')
+    .select('full_name, email')
     .eq('id', studentId)
     .single()
 
-  if (!studentProfile) return
+  if (studentError || !studentProfile) {
+    console.log('📧 [NOTIFY] Student profile not found:', studentError)
+    return
+  }
+
+  console.log('📧 [NOTIFY] Student:', studentProfile.full_name)
 
   // 2. Get active referent links with notification enabled
-  const { data: links } = await supabase
+  const { data: links, error: linksError } = await supabase
     .from('student_referent_links')
     .select(
       `
       id,
-      referent:referent_id (
-        id,
-        full_name,
-        email
-      )
+      is_active,
+      notify_on_challenge_completion,
+      referent_id
     `
     )
     .eq('student_id', studentId)
     .eq('is_active', true)
     .eq('notify_on_challenge_completion', true)
 
-  if (!links || links.length === 0) return
+  console.log('📧 [NOTIFY] Found links:', links?.length || 0, linksError ? `Error: ${linksError.message}` : '')
+
+  if (!links || links.length === 0) {
+    console.log('📧 [NOTIFY] No active referent links with notifications enabled')
+    return
+  }
 
   const successRate = (score / totalExercises) * 100
   const dashboardUrl = `${SITE_URL}/referent/dashboard`
 
   // 3. Send email to each referent
   for (const link of links) {
-    const referent = link.referent as any
+    // Get referent profile separately to ensure we have the email
+    const { data: referent } = await supabase
+      .from('profiles')
+      .select('id, full_name, email')
+      .eq('id', link.referent_id)
+      .single()
 
-    if (!referent?.email) continue
+    console.log('📧 [NOTIFY] Referent data:', referent?.email ? `${referent.full_name} <${referent.email}>` : 'No email found')
+
+    if (!referent?.email) {
+      console.log('📧 [NOTIFY] Skipping referent - no email address')
+      continue
+    }
 
     try {
-      await resend.emails.send({
+      const result = await resend.emails.send({
         from: FROM_EMAIL,
         to: referent.email,
-        subject: `${studentProfile.full_name} a complété un défi - Calcul Littéral`,
+        subject: `${studentProfile.full_name || 'Un étudiant'} a complété un défi - Calcul Littéral`,
         html: ChallengeCompletionEmailHTML({
           studentName: studentProfile.full_name || 'Un étudiant',
           referentName: referent.full_name || 'Référent',
@@ -209,12 +229,13 @@ async function notifyReferentsOfCompletion(
         }),
       })
 
-      console.log(`✅ Notification sent to referent ${referent.email}`)
+      console.log(`✅ [NOTIFY] Email sent to ${referent.email}, ID: ${result.data?.id}`)
     } catch (error) {
-      console.error(`❌ Failed to notify referent ${referent.email}:`, error)
-      // Continue to next referent even if one fails
+      console.error(`❌ [NOTIFY] Failed to send to ${referent.email}:`, error)
     }
   }
+
+  console.log('📧 [NOTIFY] Notification process completed')
 }
 
 /**
