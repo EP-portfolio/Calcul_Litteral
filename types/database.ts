@@ -52,6 +52,7 @@ export interface Database {
           created_at?: string
           updated_at?: string
         }
+        Relationships: []
       }
       challenges: {
         Row: {
@@ -81,6 +82,7 @@ export interface Database {
           exercises?: Json
           created_at?: string
         }
+        Relationships: []
       }
       user_challenge_progress: {
         Row: {
@@ -116,6 +118,22 @@ export interface Database {
           time_spent?: number | null
           status?: ChallengeStatus
         }
+        Relationships: [
+          {
+            foreignKeyName: 'user_challenge_progress_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'user_challenge_progress_challenge_id_fkey'
+            columns: ['challenge_id']
+            isOneToOne: false
+            referencedRelation: 'challenges'
+            referencedColumns: ['id']
+          }
+        ]
       }
       exercise_attempts: {
         Row: {
@@ -154,6 +172,22 @@ export interface Database {
           time_spent?: number | null
           attempted_at?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: 'exercise_attempts_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'exercise_attempts_progress_id_fkey'
+            columns: ['progress_id']
+            isOneToOne: false
+            referencedRelation: 'user_challenge_progress'
+            referencedColumns: ['id']
+          }
+        ]
       }
       referent_invitations: {
         Row: {
@@ -192,6 +226,22 @@ export interface Database {
           responded_at?: string | null
           student_message?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: 'referent_invitations_student_id_fkey'
+            columns: ['student_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'referent_invitations_referent_id_fkey'
+            columns: ['referent_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
       }
       student_referent_links: {
         Row: {
@@ -221,6 +271,29 @@ export interface Database {
           is_active?: boolean
           notify_on_challenge_completion?: boolean
         }
+        Relationships: [
+          {
+            foreignKeyName: 'student_referent_links_student_id_fkey'
+            columns: ['student_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'student_referent_links_referent_id_fkey'
+            columns: ['referent_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'student_referent_links_invitation_id_fkey'
+            columns: ['invitation_id']
+            isOneToOne: false
+            referencedRelation: 'referent_invitations'
+            referencedColumns: ['id']
+          }
+        ]
       }
     }
     Views: {
@@ -234,6 +307,7 @@ export interface Database {
           success_rate: number
           avg_time_spent: number
         }
+        Relationships: []
       }
       user_recent_activity: {
         Row: {
@@ -242,7 +316,18 @@ export interface Database {
           exercises_done: number
           correct_count: number
         }
+        Relationships: []
       }
     }
+    Functions: Record<string, never>
+    Enums: {
+      difficulty: Difficulty
+      competence: Competence
+      challenge_status: ChallengeStatus
+      account_type: AccountType
+      invitation_status: InvitationStatus
+    }
+    CompositeTypes: Record<string, never>
   }
 }
+
