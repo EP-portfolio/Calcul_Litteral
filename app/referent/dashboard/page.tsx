@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getReferentStudents, getStudentStatsForReferent } from '@/lib/actions/referent-links'
-import { Competence, Difficulty } from '@/types/database'
+import { Competence, Difficulty, Tables } from '@/types/database'
 
 export default function ReferentDashboardPage() {
   const router = useRouter()
@@ -30,13 +30,9 @@ export default function ReferentDashboardPage() {
       return
     }
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single()
+    const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
 
-    if (profile?.account_type !== 'referent') {
+    if ((profile as Tables<'profiles'> | null)?.account_type !== 'referent') {
       router.push('/dashboard')
       return
     }

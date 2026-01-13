@@ -9,6 +9,7 @@ import {
   revokeInvitation,
 } from '@/lib/actions/referent-invitations'
 import { getStudentReferents, deactivateReferentLink } from '@/lib/actions/referent-links'
+import { Tables } from '@/types/database'
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -41,16 +42,13 @@ export default function SettingsPage() {
       return
     }
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single()
+    const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
 
     if (profile) {
-      setAccountType(profile.account_type)
+      const typedProfile = profile as Tables<'profiles'>
+      setAccountType(typedProfile.account_type)
 
-      if (profile.account_type === 'student') {
+      if (typedProfile.account_type === 'student') {
         const invitationsData = await getStudentInvitations()
         setInvitations(invitationsData)
 

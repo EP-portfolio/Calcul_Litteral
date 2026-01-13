@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { signOut } from '@/lib/auth/actions'
 import { User } from '@supabase/supabase-js'
 import Link from 'next/link'
+import { Tables } from '@/types/database'
 
 export default function UserProfile() {
   const [user, setUser] = useState<User | null>(null)
@@ -28,7 +29,7 @@ export default function UserProfile() {
           .single()
           .then(({ data }) => {
             if (data) {
-              setAccountType(data.account_type)
+              setAccountType((data as Tables<'profiles'>).account_type)
             }
           })
       }
@@ -49,7 +50,7 @@ export default function UserProfile() {
           .single()
           .then(({ data }) => {
             if (data) {
-              setAccountType(data.account_type)
+              setAccountType((data as Tables<'profiles'>).account_type)
             }
           })
       } else {

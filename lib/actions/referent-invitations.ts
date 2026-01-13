@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { resend, FROM_EMAIL, SITE_URL } from '@/lib/email/resend'
 import { InvitationEmailHTML } from '@/lib/email/templates'
+import { Tables, TablesInsert } from '@/types/database'
 import crypto from 'crypto'
 
 interface SendInvitationParams {
@@ -46,7 +47,8 @@ export async function sendReferentInvitation({
     return { error: 'Profil étudiant introuvable' }
   }
 
-  if (studentProfile.account_type !== 'student') {
+  const typedProfile = studentProfile as Tables<'profiles'>
+  if (typedProfile.account_type !== 'student') {
     return { error: 'Seuls les étudiants peuvent envoyer des invitations' }
   }
 
@@ -59,7 +61,7 @@ export async function sendReferentInvitation({
   const normalizedEmail = referentEmail.toLowerCase().trim()
 
   // Prevent self-invitation
-  if (normalizedEmail === studentProfile.email?.toLowerCase()) {
+  if (normalizedEmail === typedProfile.email?.toLowerCase()) {
     return { error: 'Vous ne pouvez pas vous inviter vous-même' }
   }
 
@@ -88,10 +90,14 @@ export async function sendReferentInvitation({
     .single()
 
   if (existingInvitation) {
-    if (existingInvitation.status === 'pending') {
+    const typedInvitation = existingInvitation as Pick<
+      Tables<'referent_invitations'>,
+      'id' | 'status'
+    >
+    if (typedInvitation.status === 'pending') {
       return { error: 'Une invitation est déjà en attente pour cet email' }
     }
-    if (existingInvitation.status === 'accepted') {
+    if (typedInvitation.status === 'accepted') {
       return { error: 'Ce référent est déjà lié à votre compte' }
     }
   }
@@ -102,15 +108,17 @@ export async function sendReferentInvitation({
   // 7. Create invitation record
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
 
+  const invitationData: TablesInsert<'referent_invitations'> = {
+    student_id: user.id,
+    referent_email: normalizedEmail,
+    token,
+    expires_at: expiresAt.toISOString(),
+    student_message: studentMessage?.trim() || null,
+  }
+
   const { data: invitation, error: insertError } = await supabase
     .from('referent_invitations')
-    .insert({
-      student_id: user.id,
-      referent_email: normalizedEmail,
-      token,
-      expires_at: expiresAt.toISOString(),
-      student_message: studentMessage?.trim() || null,
-    })
+    .insert(invitationData)
     .select('id')
     .single()
 
@@ -126,9 +134,9 @@ export async function sendReferentInvitation({
     const { error: emailError } = await resend.emails.send({
       from: FROM_EMAIL,
       to: normalizedEmail,
-      subject: `${studentProfile.full_name} vous invite à suivre ses progrès - Calcul Littéral`,
+      subject: `${typedProfile.full_name} vous invite à suivre ses progrès - Calcul Littéral`,
       html: InvitationEmailHTML({
-        studentName: studentProfile.full_name || 'Un étudiant',
+        studentName: typedProfile.full_name || 'Un étudiant',
         referentEmail: normalizedEmail,
         acceptUrl,
         studentMessage: studentMessage?.trim(),
@@ -140,20 +148,25 @@ export async function sendReferentInvitation({
       console.error('Email sending error:', emailError)
 
       // Cleanup - delete invitation if email fails
-      await supabase.from('referent_invitations').delete().eq('id', invitation.id)
+      const typedInvitation = invitation as { id: string }
+      await supabase.from('referent_invitations').delete().eq('id', typedInvitation.id)
 
       return { error: "Erreur lors de l'envoi de l'email" }
     }
 
+    const typedInvitation = invitation as { id: string }
     return {
       success: true,
-      invitationId: invitation.id,
+      invitationId: typedInvitation.id,
     }
   } catch (error) {
     console.error('Unexpected email error:', error)
 
     // Cleanup
-    await supabase.from('referent_invitations').delete().eq('id', invitation.id)
+    if (invitation) {
+      const typedInvitation = invitation as { id: string }
+      await supabase.from('referent_invitations').delete().eq('id', typedInvitation.id)
+    }
 
     return { error: "Erreur inattendue lors de l'envoi" }
   }
@@ -185,7 +198,8 @@ export async function acceptReferentInvitation(token: string) {
     return { error: 'Profil introuvable' }
   }
 
-  if (referentProfile.account_type !== 'referent') {
+  const typedReferentProfile = referentProfile as Tables<'profiles'>
+  if (typedReferentProfile.account_type !== 'referent') {
     return { error: 'Seuls les comptes référent peuvent accepter des invitations' }
   }
 
@@ -201,22 +215,26 @@ export async function acceptReferentInvitation(token: string) {
   }
 
   // 4. Validate invitation
-  if (invitation.status !== 'pending') {
+  const typedInvitation = invitation as Pick<
+    Tables<'referent_invitations'>,
+    'id' | 'student_id' | 'referent_email' | 'status' | 'expires_at'
+  >
+  if (typedInvitation.status !== 'pending') {
     return { error: 'Cette invitation a déjà été traitée' }
   }
 
-  if (new Date(invitation.expires_at) < new Date()) {
+  if (new Date(typedInvitation.expires_at) < new Date()) {
     // Mark as expired
     await supabase
       .from('referent_invitations')
       .update({ status: 'expired' })
-      .eq('id', invitation.id)
+      .eq('id', typedInvitation.id)
 
     return { error: 'Cette invitation a expiré' }
   }
 
   // 5. Verify email matches
-  if (invitation.referent_email.toLowerCase() !== referentProfile.email?.toLowerCase()) {
+  if (typedInvitation.referent_email.toLowerCase() !== typedReferentProfile.email?.toLowerCase()) {
     return { error: "Cette invitation n'a pas été envoyée à votre adresse email" }
   }
 
@@ -224,7 +242,7 @@ export async function acceptReferentInvitation(token: string) {
   const { data: existingLink } = await supabase
     .from('student_referent_links')
     .select('id')
-    .eq('student_id', invitation.student_id)
+    .eq('student_id', typedInvitation.student_id)
     .eq('referent_id', user.id)
     .single()
 
@@ -237,16 +255,16 @@ export async function acceptReferentInvitation(token: string) {
         referent_id: user.id,
         responded_at: new Date().toISOString(),
       })
-      .eq('id', invitation.id)
+      .eq('id', typedInvitation.id)
 
     return { error: 'Vous êtes déjà lié à cet étudiant' }
   }
 
   // 7. Create link
   const { error: linkError } = await supabase.from('student_referent_links').insert({
-    student_id: invitation.student_id,
+    student_id: typedInvitation.student_id,
     referent_id: user.id,
-    invitation_id: invitation.id,
+    invitation_id: typedInvitation.id,
   })
 
   if (linkError) {
@@ -262,7 +280,7 @@ export async function acceptReferentInvitation(token: string) {
       referent_id: user.id,
       responded_at: new Date().toISOString(),
     })
-    .eq('id', invitation.id)
+    .eq('id', typedInvitation.id)
 
   if (updateError) {
     console.error('Invitation update error:', updateError)
