@@ -8,6 +8,57 @@ export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [password, setPassword] = useState('')
+  const [passwordStrength, setPasswordStrength] = useState<number>(0)
+
+  const calculatePasswordStrength = (pwd: string): number => {
+    let strength = 0
+    if (pwd.length >= 12) strength += 1
+    if (pwd.length >= 16) strength += 1
+    if (/[a-z]/.test(pwd)) strength += 1
+    if (/[A-Z]/.test(pwd)) strength += 1
+    if (/[0-9]/.test(pwd)) strength += 1
+    if (/[^a-zA-Z0-9]/.test(pwd)) strength += 1
+    return strength
+  }
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const pwd = e.target.value
+    setPassword(pwd)
+    if (!isLogin) {
+      setPasswordStrength(calculatePasswordStrength(pwd))
+    }
+  }
+
+  const handleTabSwitch = (loginMode: boolean) => {
+    setIsLogin(loginMode)
+    setPassword('')
+    setPasswordStrength(0)
+    setError(null)
+  }
+
+  const getPasswordStrengthColor = () => {
+    if (passwordStrength <= 2) return 'bg-red-500'
+    if (passwordStrength <= 4) return 'bg-orange-500'
+    return 'bg-green-500'
+  }
+
+  const getPasswordStrengthLabel = () => {
+    if (passwordStrength <= 2) return 'Faible'
+    if (passwordStrength <= 4) return 'Moyen'
+    return 'Fort'
+  }
+
+  const isPasswordValid = () => {
+    if (isLogin) return true
+    return (
+      password.length >= 12 &&
+      /[a-z]/.test(password) &&
+      /[A-Z]/.test(password) &&
+      /[0-9]/.test(password) &&
+      /[^a-zA-Z0-9]/.test(password)
+    )
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -52,7 +103,7 @@ export default function LoginPage() {
           {/* Boutons de basculement */}
           <div className="flex gap-2 mb-6 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg">
             <button
-              onClick={() => setIsLogin(true)}
+              onClick={() => handleTabSwitch(true)}
               className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
                 isLogin
                   ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow'
@@ -63,7 +114,7 @@ export default function LoginPage() {
               Connexion
             </button>
             <button
-              onClick={() => setIsLogin(false)}
+              onClick={() => handleTabSwitch(false)}
               className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
                 !isLogin
                   ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow'
@@ -88,22 +139,92 @@ export default function LoginPage() {
           {/* Formulaire */}
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <div>
-                <label
-                  htmlFor="full_name"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                >
-                  Nom complet
-                </label>
-                <input
-                  id="full_name"
-                  name="full_name"
-                  type="text"
-                  required={!isLogin}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                  placeholder="Votre nom"
-                />
-              </div>
+              <>
+                <div>
+                  <label
+                    htmlFor="full_name"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
+                    Nom complet
+                  </label>
+                  <input
+                    id="full_name"
+                    name="full_name"
+                    type="text"
+                    required={!isLogin}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    placeholder="Votre nom"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Type de compte
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <label className="relative flex flex-col items-center p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-colors has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 dark:has-[:checked]:bg-blue-900/20">
+                      <input
+                        type="radio"
+                        name="account_type"
+                        value="student"
+                        defaultChecked
+                        className="sr-only peer"
+                      />
+                      <div className="w-12 h-12 mb-2 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center peer-checked:bg-blue-600 peer-checked:text-white transition-colors">
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                          />
+                        </svg>
+                      </div>
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">
+                        Élève
+                      </span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 text-center mt-1">
+                        Pour pratiquer
+                      </span>
+                    </label>
+
+                    <label className="relative flex flex-col items-center p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-purple-500 dark:hover:border-purple-400 transition-colors has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50 dark:has-[:checked]:bg-purple-900/20">
+                      <input
+                        type="radio"
+                        name="account_type"
+                        value="referent"
+                        className="sr-only peer"
+                      />
+                      <div className="w-12 h-12 mb-2 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center peer-checked:bg-purple-600 peer-checked:text-white transition-colors">
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                          />
+                        </svg>
+                      </div>
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">
+                        Référent
+                      </span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 text-center mt-1">
+                        Parent, tuteur
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </>
             )}
 
             <div>
@@ -135,26 +256,88 @@ export default function LoginPage() {
                 id="password"
                 name="password"
                 type="password"
+                value={password}
+                onChange={handlePasswordChange}
                 required
                 autoComplete={isLogin ? 'current-password' : 'new-password'}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 placeholder="••••••••"
-                minLength={6}
+                minLength={isLogin ? 6 : 12}
+                pattern={
+                  isLogin
+                    ? undefined
+                    : '(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{12,}'
+                }
+                title={
+                  isLogin
+                    ? undefined
+                    : 'Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial'
+                }
               />
               {!isLogin && (
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  Minimum 6 caractères
-                </p>
+                <>
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-gray-600 dark:text-gray-400">
+                        Force du mot de passe
+                      </span>
+                      <span
+                        className={`text-xs font-medium ${
+                          passwordStrength <= 2
+                            ? 'text-red-600'
+                            : passwordStrength <= 4
+                              ? 'text-orange-600'
+                              : 'text-green-600'
+                        }`}
+                      >
+                        {password ? getPasswordStrengthLabel() : ''}
+                      </span>
+                    </div>
+                    <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-300 ${getPasswordStrengthColor()}`}
+                        style={{ width: `${(passwordStrength / 6) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="mt-2 space-y-1">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 font-semibold">
+                      Le mot de passe doit contenir :
+                    </p>
+                    <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-0.5">
+                      <li className={password.length >= 12 ? 'text-green-600' : ''}>
+                        ✓ Au moins 12 caractères
+                      </li>
+                      <li className={/[a-z]/.test(password) ? 'text-green-600' : ''}>
+                        ✓ Une lettre minuscule
+                      </li>
+                      <li className={/[A-Z]/.test(password) ? 'text-green-600' : ''}>
+                        ✓ Une lettre majuscule
+                      </li>
+                      <li className={/[0-9]/.test(password) ? 'text-green-600' : ''}>
+                        ✓ Un chiffre
+                      </li>
+                      <li className={/[^a-zA-Z0-9]/.test(password) ? 'text-green-600' : ''}>
+                        ✓ Un caractère spécial (@, #, $, etc.)
+                      </li>
+                    </ul>
+                  </div>
+                </>
               )}
             </div>
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 px-4 rounded-lg transition-colors focus:ring-4 focus:ring-blue-300"
+              disabled={loading || (!isLogin && !isPasswordValid())}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-lg transition-colors focus:ring-4 focus:ring-blue-300"
             >
               {loading ? 'Chargement...' : isLogin ? 'Se connecter' : "S'inscrire"}
             </button>
+            {!isLogin && !isPasswordValid() && password.length > 0 && (
+              <p className="text-xs text-red-600 dark:text-red-400 text-center">
+                Veuillez respecter tous les critères du mot de passe
+              </p>
+            )}
           </form>
 
           {/* Séparateur */}

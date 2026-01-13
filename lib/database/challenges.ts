@@ -2,6 +2,8 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { Difficulty, Competence } from '@/types/database'
+import { resend, FROM_EMAIL, SITE_URL } from '@/lib/email/resend'
+import { ChallengeCompletionEmailHTML } from '@/lib/email/templates'
 
 export interface ChallengeResult {
   competence: Competence
@@ -118,10 +120,100 @@ export async function saveChallengeResults(result: ChallengeResult) {
     }
 
     console.log('🎉 [SAVE] Sauvegarde terminée avec succès!')
+
+    // Send notifications to referents (non-blocking)
+    notifyReferentsOfCompletion(
+      user.id,
+      result.competence,
+      result.difficulty,
+      result.score,
+      result.totalExercises,
+      result.timeSpent
+    ).catch((error) => {
+      console.error('⚠️ Notification error (non-critical):', error)
+    })
+
     return { success: true, progressId: (progressData as any).id }
   } catch (error) {
     console.error('Erreur sauvegarde résultats:', error)
     return { error: 'Erreur lors de la sauvegarde' }
+  }
+}
+
+/**
+ * Send challenge completion notifications to referents
+ * Called after successful challenge save (non-blocking)
+ */
+async function notifyReferentsOfCompletion(
+  studentId: string,
+  competence: Competence,
+  difficulty: Difficulty,
+  score: number,
+  totalExercises: number,
+  timeSpent: number
+) {
+  const supabase = await createClient()
+
+  // 1. Get student profile
+  const { data: studentProfile } = await supabase
+    .from('profiles')
+    .select('full_name')
+    .eq('id', studentId)
+    .single()
+
+  if (!studentProfile) return
+
+  // 2. Get active referent links with notification enabled
+  const { data: links } = await supabase
+    .from('student_referent_links')
+    .select(
+      `
+      id,
+      referent:referent_id (
+        id,
+        full_name,
+        email
+      )
+    `
+    )
+    .eq('student_id', studentId)
+    .eq('is_active', true)
+    .eq('notify_on_challenge_completion', true)
+
+  if (!links || links.length === 0) return
+
+  const successRate = (score / totalExercises) * 100
+  const dashboardUrl = `${SITE_URL}/referent/dashboard`
+
+  // 3. Send email to each referent
+  for (const link of links) {
+    const referent = link.referent as any
+
+    if (!referent?.email) continue
+
+    try {
+      await resend.emails.send({
+        from: FROM_EMAIL,
+        to: referent.email,
+        subject: `${studentProfile.full_name} a complété un défi - Calcul Littéral`,
+        html: ChallengeCompletionEmailHTML({
+          studentName: studentProfile.full_name || 'Un étudiant',
+          referentName: referent.full_name || 'Référent',
+          competence,
+          difficulty,
+          score,
+          totalExercises,
+          timeSpent,
+          successRate,
+          dashboardUrl,
+        }),
+      })
+
+      console.log(`✅ Notification sent to referent ${referent.email}`)
+    } catch (error) {
+      console.error(`❌ Failed to notify referent ${referent.email}:`, error)
+      // Continue to next referent even if one fails
+    }
   }
 }
 

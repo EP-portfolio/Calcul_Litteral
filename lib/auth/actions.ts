@@ -25,12 +25,15 @@ export async function login(formData: FormData) {
 export async function signup(formData: FormData) {
   const supabase = await createClient()
 
+  const accountType = (formData.get('account_type') as string) || 'student'
+
   const data = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
     options: {
       data: {
         full_name: formData.get('full_name') as string,
+        account_type: accountType,
       },
     },
   }
@@ -42,7 +45,8 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  // Redirect based on account type
+  redirect(accountType === 'referent' ? '/referent/dashboard' : '/dashboard')
 }
 
 export async function signOut() {

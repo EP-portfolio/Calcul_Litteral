@@ -24,6 +24,10 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
+.env.local
+.env.production.local
+.env.development.local
 
 # vercel
 .vercel
@@ -36,3 +40,21 @@ next-env.d.ts
 test-*.js
 verify-*.js
 dev.log
+
+# Claude AI
+.claude/
+*.output
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# OS
+Thumbs.db
