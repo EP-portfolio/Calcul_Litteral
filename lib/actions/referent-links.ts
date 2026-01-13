@@ -128,7 +128,7 @@ export async function getStudentStatsForReferent(studentId: string) {
     .eq('referent_id', user.id)
     .eq('student_id', studentId)
     .eq('is_active', true)
-    .single()
+    .single<{ id: string }>()
 
   if (!link) {
     return null
