@@ -108,17 +108,15 @@ export async function sendReferentInvitation({
   // 7. Create invitation record
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
 
-  const invitationData: TablesInsert<'referent_invitations'> = {
-    student_id: user.id,
-    referent_email: normalizedEmail,
-    token,
-    expires_at: expiresAt.toISOString(),
-    student_message: studentMessage?.trim() || null,
-  }
-
   const { data: invitation, error: insertError } = await supabase
     .from('referent_invitations')
-    .insert(invitationData)
+    .insert({
+      student_id: user.id,
+      referent_email: normalizedEmail,
+      token,
+      expires_at: expiresAt.toISOString(),
+      student_message: studentMessage?.trim() || null,
+    } as TablesInsert<'referent_invitations'>)
     .select('id')
     .single()
 
