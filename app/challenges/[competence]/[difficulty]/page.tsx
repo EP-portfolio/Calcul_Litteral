@@ -45,6 +45,7 @@ export default function ChallengePage({ params }: PageProps) {
 
   useEffect(() => {
     initializeChallenge()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function initializeChallenge() {

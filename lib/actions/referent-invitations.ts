@@ -194,7 +194,13 @@ export async function acceptReferentInvitation(token: string) {
     .from('referent_invitations')
     .select('id, student_id, referent_email, status, expires_at')
     .eq('token', token)
-    .single<{ id: string; student_id: string; referent_email: string; status: string; expires_at: string }>()
+    .single<{
+      id: string
+      student_id: string
+      referent_email: string
+      status: string
+      expires_at: string
+    }>()
 
   if (invitationError || !invitation) {
     return { error: 'Invitation introuvable' }
