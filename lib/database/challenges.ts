@@ -172,7 +172,22 @@ async function notifyReferentsOfCompletion(
 
   console.log('📧 [NOTIFY] Student:', studentProfile.full_name)
 
-  // 2. Get active referent links with notification enabled
+  // 2. Debug: Get ALL links for this student (for debugging)
+  const { data: allLinks } = await supabase
+    .from('student_referent_links')
+    .select('id, is_active, notify_on_challenge_completion, referent_id')
+    .eq('student_id', studentId)
+
+  console.log(
+    '📧 [NOTIFY] All links for student:',
+    allLinks?.map((l) => ({
+      id: l.id,
+      active: l.is_active,
+      notify: l.notify_on_challenge_completion,
+    }))
+  )
+
+  // 3. Get active referent links with notification enabled
   const { data: links, error: linksError } = await supabase
     .from('student_referent_links')
     .select(
@@ -188,7 +203,7 @@ async function notifyReferentsOfCompletion(
     .eq('notify_on_challenge_completion', true)
 
   console.log(
-    '📧 [NOTIFY] Found links:',
+    '📧 [NOTIFY] Filtered links (active + notify):',
     links?.length || 0,
     linksError ? `Error: ${linksError.message}` : ''
   )

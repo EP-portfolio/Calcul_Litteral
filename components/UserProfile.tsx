@@ -11,50 +11,57 @@ export default function UserProfile() {
   const [user, setUser] = useState<User | null>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [accountType, setAccountType] = useState<string | null>(null)
+  const [profileName, setProfileName] = useState<string | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const supabase = createClient()
 
+    // Fonction pour charger le profil utilisateur
+    async function loadUserProfile(userId: string) {
+      const { data } = await supabase
+        .from('profiles')
+        .select('full_name, account_type')
+        .eq('id', userId)
+        .single()
+
+      if (data) {
+        const profile = data as Tables<'profiles'>
+        setAccountType(profile.account_type)
+        setProfileName(profile.full_name)
+      }
+    }
+
     // Récupérer l'utilisateur courant
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user)
-
-      // Récupérer le type de compte
       if (user) {
-        supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single()
-          .then(({ data }) => {
-            if (data) {
-              setAccountType((data as Tables<'profiles'>).account_type)
-            }
-          })
+        loadUserProfile(user.id)
       }
     })
 
     // Écouter les changements d'authentification
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email)
+
+      // Reset state on sign out
+      if (event === 'SIGNED_OUT') {
+        setUser(null)
+        setAccountType(null)
+        setProfileName(null)
+        return
+      }
+
       setUser(session?.user ?? null)
 
-      // Récupérer le type de compte lors du changement d'auth
+      // Récupérer le profil lors du changement d'auth
       if (session?.user) {
-        supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
-          .then(({ data }) => {
-            if (data) {
-              setAccountType((data as Tables<'profiles'>).account_type)
-            }
-          })
+        loadUserProfile(session.user.id)
       } else {
         setAccountType(null)
+        setProfileName(null)
       }
     })
 
@@ -84,8 +91,8 @@ export default function UserProfile() {
     )
   }
 
-  // Extraire les initiales du nom
-  const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'U'
+  // Extraire les initiales du nom (priorité au profil DB, puis metadata, puis email)
+  const displayName = profileName || user.user_metadata?.full_name || user.email?.split('@')[0] || 'U'
   const initials = displayName
     .split(' ')
     .map((n: string) => n[0])
