@@ -138,8 +138,7 @@ export function ChallengeCompletionEmailHTML({
   const minutes = Math.floor(timeSpent / 60)
   const seconds = timeSpent % 60
 
-  const performanceColor =
-    successRate >= 80 ? '#10b981' : successRate >= 60 ? '#f59e0b' : '#ef4444'
+  const performanceColor = successRate >= 80 ? '#10b981' : successRate >= 60 ? '#f59e0b' : '#ef4444'
 
   return `
 <!DOCTYPE html>

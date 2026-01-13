@@ -15,6 +15,7 @@ export default function ReferentDashboardPage() {
 
   useEffect(() => {
     loadData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function loadData() {
@@ -138,9 +139,7 @@ export default function ReferentDashboardPage() {
                         <p className="font-medium text-gray-900 dark:text-white">
                           {student?.full_name || 'Étudiant'}
                         </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {student?.email}
-                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{student?.email}</p>
                       </button>
                     )
                   })}

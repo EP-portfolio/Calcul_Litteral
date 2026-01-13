@@ -9,7 +9,6 @@ if (!process.env.RESEND_API_KEY) {
 export const resend = new Resend(process.env.RESEND_API_KEY)
 
 // Email configuration
-export const FROM_EMAIL =
-  process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev' // Default for testing
+export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev' // Default for testing
 
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://calcul-litteral.vercel.app'

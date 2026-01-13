@@ -158,9 +158,9 @@ export default function LoginPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <p className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Type de compte
-                  </label>
+                  </p>
                   <div className="grid grid-cols-2 gap-3">
                     <label className="relative flex flex-col items-center p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-colors has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 dark:has-[:checked]:bg-blue-900/20">
                       <input
@@ -264,9 +264,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 minLength={isLogin ? 6 : 12}
                 pattern={
-                  isLogin
-                    ? undefined
-                    : '(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{12,}'
+                  isLogin ? undefined : '(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{12,}'
                 }
                 title={
                   isLogin

@@ -34,6 +34,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     loadDashboardData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function loadDashboardData() {
@@ -133,12 +134,7 @@ export default function DashboardPage() {
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -149,19 +145,14 @@ export default function DashboardPage() {
                   <h3 className="text-xl font-bold">Invitez un référent !</h3>
                 </div>
                 <p className="text-white/90 mb-4">
-                  Invitez un parent, enseignant ou tuteur à suivre votre progression. Ils
-                  recevront un email après chaque challenge complété.
+                  Invitez un parent, enseignant ou tuteur à suivre votre progression. Ils recevront
+                  un email après chaque challenge complété.
                 </p>
                 <Link
                   href="/settings"
                   className="inline-flex items-center gap-2 bg-white text-purple-600 font-semibold px-6 py-3 rounded-lg hover:bg-purple-50 transition-colors"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"

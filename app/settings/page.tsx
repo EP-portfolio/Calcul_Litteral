@@ -26,6 +26,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     loadData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function loadData() {
@@ -120,9 +121,7 @@ export default function SettingsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600 dark:text-gray-400">
-            Cette page est réservée aux étudiants.
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">Cette page est réservée aux étudiants.</p>
         </div>
       </div>
     )
@@ -132,9 +131,7 @@ export default function SettingsPage() {
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
       <div className="container mx-auto max-w-4xl">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Paramètres</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-8">
-          Gérez vos référents et invitations
-        </p>
+        <p className="text-gray-600 dark:text-gray-400 mb-8">Gérez vos référents et invitations</p>
 
         {/* Invite Referent Form */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
@@ -146,7 +143,8 @@ export default function SettingsPage() {
             email pour accepter l&apos;invitation.
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-500 mb-6 italic">
-            💡 Conseil : Demandez au référent de vérifier ses spams s&apos;il ne reçoit pas l&apos;email.
+            💡 Conseil : Demandez au référent de vérifier ses spams s&apos;il ne reçoit pas
+            l&apos;email.
           </p>
 
           <form onSubmit={handleSendInvitation} className="space-y-4">

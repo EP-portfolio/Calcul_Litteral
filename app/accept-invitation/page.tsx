@@ -20,6 +20,7 @@ export default function AcceptInvitationPage() {
 
   useEffect(() => {
     checkAuthAndInvitation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function checkAuthAndInvitation() {
@@ -151,8 +152,8 @@ export default function AcceptInvitationPage() {
         {invitation && (
           <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
             <p className="text-gray-700 dark:text-gray-300">
-              <strong>{(invitation.student as any)?.full_name || 'Un étudiant'}</strong> vous
-              invite à suivre sa progression en calcul littéral.
+              <strong>{(invitation.student as any)?.full_name || 'Un étudiant'}</strong> vous invite
+              à suivre sa progression en calcul littéral.
             </p>
             {invitation.student_message && (
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 italic">

@@ -186,7 +186,7 @@ export async function acceptReferentInvitation(token: string) {
   }
 
   if (referentProfile.account_type !== 'referent') {
-    return { error: "Seuls les comptes référent peuvent accepter des invitations" }
+    return { error: 'Seuls les comptes référent peuvent accepter des invitations' }
   }
 
   // 3. Find invitation by token
