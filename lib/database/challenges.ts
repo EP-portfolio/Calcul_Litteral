@@ -121,17 +121,19 @@ export async function saveChallengeResults(result: ChallengeResult) {
 
     console.log('🎉 [SAVE] Sauvegarde terminée avec succès!')
 
-    // Send notifications to referents (non-blocking)
-    notifyReferentsOfCompletion(
-      user.id,
-      result.competence,
-      result.difficulty,
-      result.score,
-      result.totalExercises,
-      result.timeSpent
-    ).catch((error) => {
-      console.error('⚠️ Notification error (non-critical):', error)
-    })
+    // Send notifications to referents (await to ensure completion in serverless)
+    try {
+      await notifyReferentsOfCompletion(
+        user.id,
+        result.competence,
+        result.difficulty,
+        result.score,
+        result.totalExercises,
+        result.timeSpent
+      )
+    } catch (notifyError) {
+      console.error('⚠️ Notification error (non-critical):', notifyError)
+    }
 
     return { success: true, progressId: (progressData as any).id }
   } catch (error) {
