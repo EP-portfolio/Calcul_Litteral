@@ -24,6 +24,7 @@ export default function ChallengesPage() {
 
   useEffect(() => {
     loadChallenges()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function loadChallenges() {
