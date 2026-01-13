@@ -45,7 +45,7 @@ export default function SettingsPage() {
       .from('profiles')
       .select('account_type')
       .eq('id', user.id)
-      .single<{ account_type: string }>()
+      .single()
 
     if (profile) {
       setAccountType(profile.account_type)

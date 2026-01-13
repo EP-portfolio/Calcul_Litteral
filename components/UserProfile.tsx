@@ -25,7 +25,7 @@ export default function UserProfile() {
           .from('profiles')
           .select('account_type')
           .eq('id', user.id)
-          .single<{ account_type: string }>()
+          .single()
           .then(({ data }) => {
             if (data) {
               setAccountType(data.account_type)
@@ -46,7 +46,7 @@ export default function UserProfile() {
           .from('profiles')
           .select('account_type')
           .eq('id', session.user.id)
-          .single<{ account_type: string }>()
+          .single()
           .then(({ data }) => {
             if (data) {
               setAccountType(data.account_type)

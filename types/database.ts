@@ -10,6 +10,8 @@ export type Json =
 export type Difficulty = 'facile' | 'moyen' | 'difficile'
 export type Competence = 'developpement' | 'reduction' | 'factorisation'
 export type ChallengeStatus = 'in_progress' | 'completed' | 'abandoned'
+export type AccountType = 'student' | 'referent'
+export type InvitationStatus = 'pending' | 'accepted' | 'rejected' | 'expired'
 
 export interface Database {
   public: {
@@ -20,6 +22,8 @@ export interface Database {
           email: string | null
           full_name: string | null
           avatar_url: string | null
+          account_type: AccountType
+          student_code: string | null
           created_at: string
           updated_at: string
         }
@@ -28,6 +32,8 @@ export interface Database {
           email?: string | null
           full_name?: string | null
           avatar_url?: string | null
+          account_type?: AccountType
+          student_code?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -36,6 +42,8 @@ export interface Database {
           email?: string | null
           full_name?: string | null
           avatar_url?: string | null
+          account_type?: AccountType
+          student_code?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -140,6 +148,73 @@ export interface Database {
           is_correct?: boolean
           time_spent?: number | null
           attempted_at?: string
+        }
+      }
+      referent_invitations: {
+        Row: {
+          id: string
+          student_id: string
+          referent_email: string
+          referent_id: string | null
+          token: string
+          status: InvitationStatus
+          sent_at: string
+          expires_at: string
+          responded_at: string | null
+          student_message: string | null
+        }
+        Insert: {
+          id?: string
+          student_id: string
+          referent_email: string
+          referent_id?: string | null
+          token: string
+          status?: InvitationStatus
+          sent_at?: string
+          expires_at: string
+          responded_at?: string | null
+          student_message?: string | null
+        }
+        Update: {
+          id?: string
+          student_id?: string
+          referent_email?: string
+          referent_id?: string | null
+          token?: string
+          status?: InvitationStatus
+          sent_at?: string
+          expires_at?: string
+          responded_at?: string | null
+          student_message?: string | null
+        }
+      }
+      student_referent_links: {
+        Row: {
+          id: string
+          student_id: string
+          referent_id: string
+          linked_at: string
+          invitation_id: string | null
+          is_active: boolean
+          notify_on_challenge_completion: boolean
+        }
+        Insert: {
+          id?: string
+          student_id: string
+          referent_id: string
+          linked_at?: string
+          invitation_id?: string | null
+          is_active?: boolean
+          notify_on_challenge_completion?: boolean
+        }
+        Update: {
+          id?: string
+          student_id?: string
+          referent_id?: string
+          linked_at?: string
+          invitation_id?: string | null
+          is_active?: boolean
+          notify_on_challenge_completion?: boolean
         }
       }
     }

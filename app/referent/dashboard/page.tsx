@@ -34,7 +34,7 @@ export default function ReferentDashboardPage() {
       .from('profiles')
       .select('account_type')
       .eq('id', user.id)
-      .single<{ account_type: string }>()
+      .single()
 
     if (profile?.account_type !== 'referent') {
       router.push('/dashboard')

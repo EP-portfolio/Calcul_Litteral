@@ -40,7 +40,7 @@ export async function sendReferentInvitation({
     .from('profiles')
     .select('full_name, account_type, email')
     .eq('id', user.id)
-    .single<{ full_name: string; account_type: string; email: string }>()
+    .single()
 
   if (profileError || !studentProfile) {
     return { error: 'Profil étudiant introuvable' }
@@ -85,7 +85,7 @@ export async function sendReferentInvitation({
     .select('id, status')
     .eq('student_id', user.id)
     .eq('referent_email', normalizedEmail)
-    .single<{ id: string; status: string }>()
+    .single()
 
   if (existingInvitation) {
     if (existingInvitation.status === 'pending') {
@@ -112,7 +112,7 @@ export async function sendReferentInvitation({
       student_message: studentMessage?.trim() || null,
     })
     .select('id')
-    .single<{ id: string }>()
+    .single()
 
   if (insertError || !invitation) {
     console.error('Invitation creation error:', insertError)
@@ -179,7 +179,7 @@ export async function acceptReferentInvitation(token: string) {
     .from('profiles')
     .select('email, account_type')
     .eq('id', user.id)
-    .single<{ email: string; account_type: string }>()
+    .single()
 
   if (profileError || !referentProfile) {
     return { error: 'Profil introuvable' }
@@ -194,13 +194,7 @@ export async function acceptReferentInvitation(token: string) {
     .from('referent_invitations')
     .select('id, student_id, referent_email, status, expires_at')
     .eq('token', token)
-    .single<{
-      id: string
-      student_id: string
-      referent_email: string
-      status: string
-      expires_at: string
-    }>()
+    .single()
 
   if (invitationError || !invitation) {
     return { error: 'Invitation introuvable' }
@@ -232,7 +226,7 @@ export async function acceptReferentInvitation(token: string) {
     .select('id')
     .eq('student_id', invitation.student_id)
     .eq('referent_id', user.id)
-    .single<{ id: string }>()
+    .single()
 
   if (existingLink) {
     // Update invitation status even if link exists
