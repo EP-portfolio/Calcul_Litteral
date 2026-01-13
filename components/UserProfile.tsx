@@ -23,7 +23,7 @@ export default function UserProfile() {
       if (user) {
         supabase
           .from('profiles')
-          .select('account_type')
+          .select('*')
           .eq('id', user.id)
           .single()
           .then(({ data }) => {
@@ -44,7 +44,7 @@ export default function UserProfile() {
       if (session?.user) {
         supabase
           .from('profiles')
-          .select('account_type')
+          .select('*')
           .eq('id', session.user.id)
           .single()
           .then(({ data }) => {

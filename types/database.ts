@@ -13,6 +13,11 @@ export type ChallengeStatus = 'in_progress' | 'completed' | 'abandoned'
 export type AccountType = 'student' | 'referent'
 export type InvitationStatus = 'pending' | 'accepted' | 'rejected' | 'expired'
 
+// Helper types for partial queries
+export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row']
+export type TablesInsert<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert']
+export type TablesUpdate<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Update']
+
 export interface Database {
   public: {
     Tables: {

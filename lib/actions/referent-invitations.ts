@@ -38,7 +38,7 @@ export async function sendReferentInvitation({
   // 2. Get student profile
   const { data: studentProfile, error: profileError } = await supabase
     .from('profiles')
-    .select('full_name, account_type, email')
+    .select('*')
     .eq('id', user.id)
     .single()
 
@@ -177,7 +177,7 @@ export async function acceptReferentInvitation(token: string) {
   // 2. Get user profile
   const { data: referentProfile, error: profileError } = await supabase
     .from('profiles')
-    .select('email, account_type')
+    .select('*')
     .eq('id', user.id)
     .single()
 
