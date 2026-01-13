@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { resend, FROM_EMAIL, SITE_URL } from '@/lib/email/resend'
 import { InvitationEmailHTML } from '@/lib/email/templates'
-import { Tables, TablesInsert } from '@/types/database'
+import { Tables, Database } from '@/types/database'
 import crypto from 'crypto'
 
 interface SendInvitationParams {
@@ -108,15 +108,17 @@ export async function sendReferentInvitation({
   // 7. Create invitation record
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
 
+  const invitationData: Database['public']['Tables']['referent_invitations']['Insert'] = {
+    student_id: user.id,
+    referent_email: normalizedEmail,
+    token,
+    expires_at: expiresAt.toISOString(),
+    student_message: studentMessage?.trim() || null,
+  }
+
   const { data: invitation, error: insertError } = await supabase
     .from('referent_invitations')
-    .insert({
-      student_id: user.id,
-      referent_email: normalizedEmail,
-      token,
-      expires_at: expiresAt.toISOString(),
-      student_message: studentMessage?.trim() || null,
-    } as TablesInsert<'referent_invitations'>)
+    .insert(invitationData)
     .select('id')
     .single()
 
