@@ -92,7 +92,8 @@ export default function UserProfile() {
   }
 
   // Extraire les initiales du nom (priorité au profil DB, puis metadata, puis email)
-  const displayName = profileName || user.user_metadata?.full_name || user.email?.split('@')[0] || 'U'
+  const displayName =
+    profileName || user.user_metadata?.full_name || user.email?.split('@')[0] || 'U'
   const initials = displayName
     .split(' ')
     .map((n: string) => n[0])
