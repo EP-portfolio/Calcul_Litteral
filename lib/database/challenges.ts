@@ -185,7 +185,11 @@ async function notifyReferentsOfCompletion(
     .eq('is_active', true)
     .eq('notify_on_challenge_completion', true)
 
-  console.log('📧 [NOTIFY] Found links:', links?.length || 0, linksError ? `Error: ${linksError.message}` : '')
+  console.log(
+    '📧 [NOTIFY] Found links:',
+    links?.length || 0,
+    linksError ? `Error: ${linksError.message}` : ''
+  )
 
   if (!links || links.length === 0) {
     console.log('📧 [NOTIFY] No active referent links with notifications enabled')
@@ -204,7 +208,10 @@ async function notifyReferentsOfCompletion(
       .eq('id', link.referent_id)
       .single()
 
-    console.log('📧 [NOTIFY] Referent data:', referent?.email ? `${referent.full_name} <${referent.email}>` : 'No email found')
+    console.log(
+      '📧 [NOTIFY] Referent data:',
+      referent?.email ? `${referent.full_name} <${referent.email}>` : 'No email found'
+    )
 
     if (!referent?.email) {
       console.log('📧 [NOTIFY] Skipping referent - no email address')
